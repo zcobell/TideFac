@@ -114,11 +114,9 @@ message(STATUS "TideFac Version: ${GIT_VERSION}")
 # ##############################################################################
 # Boost
 # ##############################################################################
-#find_package(Boost 1.60.0)
-#if(NOT Boost_FOUND OR PACKAGE_VERSION_UNSUITABLE)
-#  message(STATUS "Using included Boost Version: 1.73.0")
-#  set(Boost_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost_1_73_0)
-#endif()
+# find_package(Boost 1.60.0) if(NOT Boost_FOUND OR PACKAGE_VERSION_UNSUITABLE)
+# message(STATUS "Using included Boost Version: 1.73.0") set(Boost_INCLUDE_DIRS
+# ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost_1_73_0) endif()
 # ##############################################################################
 
 # ##############################################################################
@@ -128,10 +126,12 @@ option(TIDEFAC_BUILD_TESTS "Build test cases" OFF)
 if(TIDEFAC_BUILD_TESTS)
   enable_testing()
 endif()
-OPTION(TIDEFAC_BUILD_BENCHMARK "Build benchmark" OFF)
-IF(TIDEFAC_BUILD_BENCHMARK)
-    SET( GOOGLE_BENCHMARK_HOME "/opt/google-benchmark" CACHE STRING "Location of the Google Benchmark library" )
-ENDIF(TIDEFAC_BUILD_BENCHMARK)
+option(TIDEFAC_BUILD_BENCHMARK "Build benchmark" OFF)
+if(TIDEFAC_BUILD_BENCHMARK)
+  set(GOOGLE_BENCHMARK_HOME
+      "/opt/google-benchmark"
+      CACHE STRING "Location of the Google Benchmark library")
+endif(TIDEFAC_BUILD_BENCHMARK)
 # ##############################################################################
 
 # ##############################################################################
@@ -170,7 +170,7 @@ if(SWIG_FOUND
     execute_process(
       COMMAND ${PYTHON_EXECUTABLE} -m site --user-site
       OUTPUT_VARIABLE temp_PYTHON_SITE_DIRECTORY
-                      OUTPUT_STRIP_TRAILING_WHITESPACE)
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(PYTHON_INSTALL_DIRECTORY
         ${temp_PYTHON_SITE_DIRECTORY}
         CACHE STRING "Location where Python libraries will be installed")
@@ -187,7 +187,8 @@ else(
   SWIG_FOUND
   AND PythonLibs_FOUND
   AND PythonInterp_FOUND)
-  message(WARNING "SWIG/Python libraries could not be found. PyTidefac disabled.")
+  message(
+    WARNING "SWIG/Python libraries could not be found. PyTidefac disabled.")
 endif(
   SWIG_FOUND
   AND PythonLibs_FOUND
@@ -200,22 +201,20 @@ endif(
 set(TIDEFAC_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/constituent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/date.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.cpp )
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.cpp)
 
 add_library(tidefac ${TIDEFAC_SOURCES})
 
-set(HEADER_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.h 
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/date.h )
+set(HEADER_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.h
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/date.h)
 
-target_include_directories(
-  tidefac
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src )
+target_include_directories(tidefac PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_compile_definitions(tidefac PRIVATE GIT_VERSION="${GIT_VERSION}")
 target_compile_definitions(tidefac PRIVATE TIDEFAC_LIBRARY)
 
 set_target_properties(tidefac PROPERTIES VERSION ${TIDEFAC_VERSION_STRING}
-                                      SOVERSION ${TIDEFAC_VERSION_MAJOR})
+                                         SOVERSION ${TIDEFAC_VERSION_MAJOR})
 set_target_properties(tidefac PROPERTIES PUBLIC_HEADER "${HEADER_LIST}")
 
 if(${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local"
@@ -284,15 +283,14 @@ if(SWIG_FOUND
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx
       COMMAND
         ${SWIG_EXECUTABLE} -outdir ${CMAKE_CURRENT_BINARY_DIR} -c++ -python
-        ${PYTHONFLAG} -I${CMAKE_CURRENT_SOURCE_DIR}/src
-        -I${PYTHON_INCLUDE_PATH} -o
-        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx.1
+        ${PYTHONFLAG} -I${CMAKE_CURRENT_SOURCE_DIR}/src -I${PYTHON_INCLUDE_PATH}
+        -o ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx.1
         ${CMAKE_CURRENT_SOURCE_DIR}/python/tidefac.i
       COMMAND
         ${CMAKE_COMMAND}
         -DSRC=\"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx.1\"
-        -DDST=\"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx\" -P
-        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_wrapper.cmake
+        -DDST=\"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx\"
+        -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_wrapper.cmake
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating SWIG interface to Python...")
 
@@ -301,9 +299,8 @@ if(SWIG_FOUND
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx
       COMMAND
         ${SWIG_EXECUTABLE} -outdir ${CMAKE_CURRENT_BINARY_DIR} -c++ -python
-        ${PYTHONFLAG} -I${CMAKE_CURRENT_SOURCE_DIR}/src
-        -I${PYTHON_INCLUDE_PATH} -o
-        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx
+        ${PYTHONFLAG} -I${CMAKE_CURRENT_SOURCE_DIR}/src -I${PYTHON_INCLUDE_PATH}
+        -o ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx
         ${CMAKE_CURRENT_SOURCE_DIR}/python/tidefac.i
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating SWIG interface to Python...")
@@ -312,7 +309,7 @@ if(SWIG_FOUND
   add_library(PyTidefac SHARED
               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/python_tidefac_wrap.cxx)
   target_include_directories(PyTidefac PRIVATE ${PYTHON_INCLUDE_PATH}
-                                            ${CMAKE_CURRENT_SOURCE_DIR}/src)
+                                               ${CMAKE_CURRENT_SOURCE_DIR}/src)
   target_link_libraries(PyTidefac tidefac ${PYTHON_LIBRARY})
   set_target_properties(PyTidefac PROPERTIES PREFIX "_")
   set_target_properties(PyTidefac PROPERTIES INSTALL_NAME_DIR "PyTidefac")
@@ -327,21 +324,21 @@ if(SWIG_FOUND
   if(WIN32)
     set_target_properties(
       PyTidefac PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+                           RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     install(
       TARGETS PyTidefac
       LIBRARY DESTINATION bin
       RUNTIME DESTINATION ${PYTHON_INSTALL_DIRECTORY})
   elseif(CYGWIN)
     set_target_properties(PyTidefac PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                            ${CMAKE_CURRENT_BINARY_DIR})
+                                               ${CMAKE_CURRENT_BINARY_DIR})
     install(
       TARGETS PyTidefac
       LIBRARY DESTINATION lib
       RUNTIME DESTINATION ${PYTHON_INSTALL_DIRECTORY})
   else(WIN32)
     set_target_properties(PyTidefac PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                            ${CMAKE_CURRENT_BINARY_DIR})
+                                               ${CMAKE_CURRENT_BINARY_DIR})
     install(TARGETS PyTidefac LIBRARY DESTINATION ${PYTHON_INSTALL_DIRECTORY})
   endif(WIN32)
 
@@ -372,17 +369,17 @@ endif(
 if(UNIX OR CYGWIN)
   if(TIDEFAC_BUILD_TESTS)
     # ...C++ Testing
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cxx)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testing)
 
-    set(TEST_LIST "cxx_readAdcirc.cpp" "cxx_readAdcircNetcdf.cpp"
-                  "cxx_readNefis.cpp")
+    set(TEST_LIST "testcase.cpp")
 
     foreach(TESTFILE ${TEST_LIST})
       get_filename_component(TESTNAME ${TESTFILE} NAME_WE)
-      add_executable(${TESTNAME} ${CMAKE_SOURCE_DIR}/testing/cxx/${TESTFILE})
+      add_executable(${TESTNAME} ${CMAKE_SOURCE_DIR}/testing/${TESTFILE})
       add_dependencies(${TESTNAME} tidefac)
-      target_include_directories(${TESTNAME}
-                                 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+      target_include_directories(
+        ${TESTNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+                            ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/catch2)
       target_link_libraries(${TESTNAME} tidefac ${NETCDF_LIBS})
       set_target_properties(
         ${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
@@ -421,7 +418,8 @@ if(UNIX OR CYGWIN)
             ENVIRONMENT
             "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_CURRENT_BINARY_DIR}")
         set_property(
-          TEST ${PYTHON_TESTNAME} APPEND
+          TEST ${PYTHON_TESTNAME}
+          APPEND
           PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
       endif()
     endif(SWIG_FOUND)
@@ -429,18 +427,17 @@ if(UNIX OR CYGWIN)
 endif(UNIX OR CYGWIN)
 # ##############################################################################
 
-
 # ##############################################################################
 # Benchmarking
 # ##############################################################################
-IF(TIDEFAC_BUILD_BENCHMARK)
-    ADD_EXECUTABLE( tidefac_benchmark ${CMAKE_CURRENT_SOURCE_DIR}/bench/bench.cpp )
-    TARGET_LINK_LIBRARIES( tidefac_benchmark tidefac benchmark pthread )
-    TARGET_LINK_DIRECTORIES( tidefac_benchmark PRIVATE ${GOOGLE_BENCHMARK_HOME}/lib )
-    TARGET_INCLUDE_DIRECTORIES( tidefac_benchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${GOOGLE_BENCHMARK_HOME}/include )
-ENDIF(TIDEFAC_BUILD_BENCHMARK)
-
+if(TIDEFAC_BUILD_BENCHMARK)
+  add_executable(tidefac_benchmark ${CMAKE_CURRENT_SOURCE_DIR}/bench/bench.cpp)
+  target_link_libraries(tidefac_benchmark tidefac benchmark pthread)
+  target_link_directories(tidefac_benchmark PRIVATE
+                          ${GOOGLE_BENCHMARK_HOME}/lib)
+  target_include_directories(
+    tidefac_benchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+                              ${GOOGLE_BENCHMARK_HOME}/include)
+endif(TIDEFAC_BUILD_BENCHMARK)
 
 # ##############################################################################
-
-

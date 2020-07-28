@@ -1,3 +1,21 @@
+/*------------------------------GPL---------------------------------------//
+// This file is part of TideFac.
+//
+// (c) 2020 Zachary Cobell
+//
+// TideFac is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// TideFac is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with TideFac.  If not, see <http://www.gnu.org/licenses/>.
+//------------------------------------------------------------------------*/
 #ifndef CONSTITUENT_H
 #define CONSTITUENT_H
 
@@ -7,11 +25,8 @@
 
 class Constituent {
  public:
-  //  Constituent(const char *name) noexcept;
-  //  Constituent(const std::string &name) noexcept;
-
   struct TC {
-    std::string name;
+    const char *name;
     const double frequency;
     const std::array<double, 6> doodson;
     const double semi;
@@ -21,18 +36,6 @@ class Constituent {
     const double doodsonamp;
     const double earthreduc;
   };
-
-  //  const char *name() const noexcept;
-  //  bool isnull() const noexcept;
-
-  //  double frequency() const;
-  //  double doodson(size_t index) const;
-  //  double semi() const;
-  //  double isat() const;
-  //  int ishallow() const;
-  //  int nshallow() const;
-  //  double doodsonamp() const;
-  //  double earthreduc() const;
 
   template <typename T>
   static constexpr T nullvalue() {
@@ -50,12 +53,6 @@ class Constituent {
   static const std::array<int, 251> *shallow_iconst();
   static const std::array<double, 251> *shallow_coef();
   static const std::array<int, 251> *shallow_iname();
-  //  static const std::unordered_map<const char *, const TC *> *tideMap();
-
- private:
-  //  static const TC *initialize(const std::string &name) noexcept;
-
-  const TC *m_data;
 };
 
 #endif  // CONSTITUENT_H

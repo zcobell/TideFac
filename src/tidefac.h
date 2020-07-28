@@ -1,3 +1,21 @@
+/*------------------------------GPL---------------------------------------//
+// This file is part of TideFac.
+//
+// (c) 2020 Zachary Cobell
+//
+// TideFac is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// TideFac is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with TideFac.  If not, see <http://www.gnu.org/licenses/>.
+//------------------------------------------------------------------------*/
 #ifndef TIDEFAC_H
 #define TIDEFAC_H
 
@@ -26,6 +44,13 @@ class TideFac {
   void TIDEFAC_EXPORT show() const;
 
   Date TIDEFAC_EXPORT curTime() const;
+
+  std::string TIDEFAC_EXPORT name(size_t index);
+  double TIDEFAC_EXPORT amplitude(size_t index);
+  double TIDEFAC_EXPORT frequency(size_t index);
+  double TIDEFAC_EXPORT earthTideReductionFactor(size_t index);
+  double TIDEFAC_EXPORT nodeFactor(size_t index);
+  double TIDEFAC_EXPORT equilibriumArgument(size_t index);
 
  private:
   struct Tide {

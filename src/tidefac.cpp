@@ -1,6 +1,25 @@
+/*------------------------------GPL---------------------------------------//
+// This file is part of TideFac.
+//
+// (c) 2020 Zachary Cobell
+//
+// TideFac is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// TideFac is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with TideFac.  If not, see <http://www.gnu.org/licenses/>.
+//------------------------------------------------------------------------*/
 #include "tidefac.h"
 
 #include <cmath>
+#include <iostream>
 #include <numeric>
 
 #include "constituent.h"
@@ -30,9 +49,10 @@ int TideFac::addConstituent(const std::string &harmonic) {
   if (idx == Constituent::nullvalue<size_t>()) {
     return 1;
   } else {
-    if (std::find(this->m_constituentIndex.begin(),
-                  this->m_constituentIndex.end(),
-                  idx) == this->m_constituentIndex.end()) {
+    auto s = std::find(this->m_constituentIndex.begin(),
+                       this->m_constituentIndex.end(), idx);
+    if (this->m_constituentIndex.size() == 0 ||
+        s == this->m_constituentIndex.end()) {
       this->m_constituentIndex.push_back(idx);
       this->m_constituentNames.push_back(harmonic);
     }
@@ -41,6 +61,11 @@ int TideFac::addConstituent(const std::string &harmonic) {
 }
 
 void TideFac::calculate(const Date &d, const double latitude) {
+  if (this->m_constituentIndex.size() == 0) {
+    std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
+    return;
+  }
+
   std::vector<double> F, U, V;
   std::tie(F, U, V) = this->computeAstronomicalArguments(d, latitude);
 
@@ -286,6 +311,36 @@ void TideFac::computeOrbitalParameters(const Date &d,
 }
 
 Date TideFac::curTime() const { return this->m_curTime; }
+
+std::string TideFac::name(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].name;
+}
+
+double TideFac::amplitude(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].amp;
+}
+
+double TideFac::frequency(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].freq;
+}
+
+double TideFac::earthTideReductionFactor(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].etrf;
+}
+
+double TideFac::nodeFactor(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].nodefactor;
+}
+
+double TideFac::equilibriumArgument(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].eqarg;
+}
 
 Date TideFac::refTime() const { return this->m_refTime; }
 
