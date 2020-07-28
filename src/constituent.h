@@ -22,7 +22,6 @@
 #include <array>
 #include <string>
 #include <limits>
-#include <unordered_map>
 #include <vector>
 
 class Constituent {

@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "TideFac_global.h"
+#include "tidefac_global.h"
 #include "date.h"
 
 class TideFac {
