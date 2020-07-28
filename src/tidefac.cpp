@@ -32,18 +32,6 @@ int TideFac::addConstituent(const char *harmonic) {
   return this->addConstituent(std::string(harmonic));
 }
 
-int TideFac::addMajor8() {
-  this->addConstituent("M2");
-  this->addConstituent("S2");
-  this->addConstituent("N2");
-  this->addConstituent("K2");
-  this->addConstituent("K1");
-  this->addConstituent("O1");
-  this->addConstituent("Q1");
-  this->addConstituent("P1");
-  return 0;
-}
-
 int TideFac::addConstituent(const std::string &harmonic) {
   size_t idx = Constituent::constituentIndex(harmonic);
   if (idx == Constituent::nullvalue<size_t>()) {
@@ -58,6 +46,22 @@ int TideFac::addConstituent(const std::string &harmonic) {
     }
     return 0;
   }
+}
+
+int TideFac::addMajor8() {
+  this->addConstituent("M2");
+  this->addConstituent("S2");
+  this->addConstituent("N2");
+  this->addConstituent("K2");
+  this->addConstituent("K1");
+  this->addConstituent("O1");
+  this->addConstituent("Q1");
+  this->addConstituent("P1");
+  return 0;
+}
+
+void TideFac::calculate(const size_t dt, const double latitude) {
+  this->calculate(this->m_refTime + dt, latitude);
 }
 
 void TideFac::calculate(const Date &d, const double latitude) {
@@ -94,10 +98,6 @@ void TideFac::calculate(const Date &d, const double latitude) {
     this->m_tides.push_back(
         Tide{name, amp, frequency, etrf, nodeFactor, nfCorrection});
   }
-}
-
-void TideFac::calculate(const size_t dt, const double latitude) {
-  this->calculate(this->m_refTime + dt, latitude);
 }
 
 void TideFac::show() const {
@@ -149,7 +149,7 @@ TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
                       1.0);
   }
 
-  const std::complex<double> c_i(0, 1);
+  constexpr std::complex<double> c_i(0, 1);
   std::array<std::complex<double>, 162> mat;
   for (size_t i = 0; i < rr.size(); ++i) {
     mat[i] = rr[i] * std::exp(c_i * TideFac::twopi() * uu[i]);
@@ -166,34 +166,6 @@ TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
   for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
     U[i] = std::log(F[i]).imag() / TideFac::twopi();
     F[i] = std::abs(F[i]);
-  }
-
-  for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
-    if (Constituent::constituents()->at(i)->ishallow !=
-        Constituent::nullvalue<int>()) {
-      int j = Constituent::constituents()->at(i)->nshallow;
-      int k = Constituent::constituents()->at(i)->ishallow;
-      std::vector<int> ik(j), iloc(j);
-      std::vector<double> exp1(j), exp2(j);
-      for (size_t p = 0; p < ik.size(); ++p) {
-        ik[p] = k + p;
-        iloc[p] = Constituent::shallow_iname()->at(ik[p] - 1);
-        exp1[p] = Constituent::shallow_coef()->at(ik[p] - 1);
-        exp2[p] = std::abs(exp1[p]);
-      }
-
-      double product_1 = 1.0;
-      double product_2 = 0.0;
-      for (size_t p = 0; p < ik.size(); ++p) {
-        product_1 = product_1 * std::pow(F[iloc[p] - 1].real(), exp2[p]);
-        product_2 = product_2 + U[iloc[p] - 1] * exp1[p];
-      }
-      F[i] = product_1;
-      U[i] = product_2;
-    }
-  }
-
-  for (size_t i = 0; i < V.size(); ++i) {
     if (Constituent::constituents()->at(i)->doodson[0] !=
         Constituent::nullvalue<double>()) {
       V[i] = std::fmod(
@@ -221,13 +193,20 @@ TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
         ik[p] = k + p;
         iloc[p] = Constituent::shallow_iname()->at(ik[p] - 1);
         exp1[p] = Constituent::shallow_coef()->at(ik[p] - 1);
+        exp2[p] = std::abs(exp1[p]);
       }
 
-      double product_1 = 0.0;
+      double product_1 = 1.0;
+      double product_2 = 0.0;
+      double product_3 = 0.0;
       for (size_t p = 0; p < ik.size(); ++p) {
-        product_1 = product_1 + V[iloc[p] - 1] * exp1[p];
+        product_1 = product_1 * std::pow(F[iloc[p] - 1].real(), exp2[p]);
+        product_2 = product_2 + U[iloc[p] - 1] * exp1[p];
+        product_3 = product_3 + V[iloc[p] - 1] * exp1[p];
       }
-      V[i] = product_1;
+      F[i] = product_1;
+      U[i] = product_2;
+      V[i] = product_3;
     }
   }
 
