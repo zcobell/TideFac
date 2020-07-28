@@ -18,6 +18,7 @@
 //------------------------------------------------------------------------*/
 #include "constituent.h"
 
+#include <algorithm>
 #include <cassert>
 #include <unordered_map>
 #include <vector>
