@@ -40,6 +40,7 @@ class TideFac {
 
   void TIDEFAC_EXPORT calculate(const Date &d, const double latitude);
   void TIDEFAC_EXPORT calculate(const size_t dt, const double latitude);
+  void TIDEFAC_EXPORT calculate(const double dt, const double latitude);
 
   void TIDEFAC_EXPORT show() const;
 

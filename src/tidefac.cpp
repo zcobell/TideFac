@@ -66,6 +66,10 @@ void TideFac::calculate(const size_t dt, const double latitude) {
   this->calculate(this->m_refTime + dt, latitude);
 }
 
+void TideFac::calculate(const double dt, const double latitude) {
+  this->calculate(static_cast<size_t>(std::floor(dt)), latitude);
+}
+
 void TideFac::calculate(const Date &d, const double latitude) {
   if (this->m_constituentIndex.size() == 0) {
     std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
