@@ -21,6 +21,7 @@
 
 #include <array>
 #include <complex>
+#include <string>
 #include <vector>
 
 #include "TideFac_global.h"
@@ -62,6 +63,8 @@ class TideFac {
     double nodefactor;
     double eqarg;
   };
+
+  static std::string toUpper(const std::string &s);
 
   static constexpr double pi() { return 3.14159265358979323846264338327950288; }
   static constexpr double twopi() { return pi() * 2.0; }

@@ -22,6 +22,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <locale>
 #include <numeric>
 
 #include "constituent.h"
@@ -34,8 +35,19 @@ int TideFac::addConstituent(const char *harmonic) {
   return this->addConstituent(std::string(harmonic));
 }
 
+std::string TideFac::toUpper(const std::string &s){
+  std::locale loc;
+  std::string sout;
+  sout.reserve(s.size());
+  for(auto &c : s){
+      sout.push_back(std::toupper(c,loc));
+  }
+  return sout;
+}
+
 int TideFac::addConstituent(const std::string &harmonic) {
-  size_t idx = Constituent::constituentIndex(harmonic);
+  const std::string harm = TideFac::toUpper(harmonic);
+  size_t idx = Constituent::constituentIndex(harm);
   if (idx == Constituent::nullvalue<size_t>()) {
     return 1;
   } else {
@@ -44,7 +56,7 @@ int TideFac::addConstituent(const std::string &harmonic) {
     if (this->m_constituentIndex.size() == 0 ||
         s == this->m_constituentIndex.end()) {
       this->m_constituentIndex.push_back(idx);
-      this->m_constituentNames.push_back(harmonic);
+      this->m_constituentNames.push_back(harm);
     }
     return 0;
   }
