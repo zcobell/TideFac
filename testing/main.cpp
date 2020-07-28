@@ -3,6 +3,7 @@
 
 int main() {
   TideFac f;
+  f.addMajor8();
   f.calculate(Date(2011, 11, 1, 0, 0, 0),29.7046);
 
   return 0;

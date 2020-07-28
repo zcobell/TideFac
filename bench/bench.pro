@@ -16,7 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        bench.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../src/release/ -ltidefac
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../src/debug/ -ltidefac
@@ -24,3 +24,11 @@ else:unix: LIBS += -L$$OUT_PWD/../src/ -ltidefac
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
+
+
+macx: LIBS += -L/opt/google-benchmark/lib/ -lbenchmark
+
+INCLUDEPATH += /opt/google-benchmark/include
+DEPENDPATH += /opt/google-benchmark/include
+
+macx: PRE_TARGETDEPS += /opt/google-benchmark/lib/libbenchmark.a

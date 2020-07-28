@@ -3,34 +3,90 @@
 #include <cmath>
 #include <numeric>
 
-TideFac::TideFac() {}
+#include "constituent.h"
+
+TideFac::TideFac() : m_refTime(0) {}
+
+TideFac::TideFac(const Date &refTime) : m_refTime(refTime) {}
 
 int TideFac::addConstituent(const char *harmonic) {
   return this->addConstituent(std::string(harmonic));
 }
 
+int TideFac::addMajor8() {
+  this->addConstituent("M2");
+  this->addConstituent("S2");
+  this->addConstituent("N2");
+  this->addConstituent("K2");
+  this->addConstituent("K1");
+  this->addConstituent("O1");
+  this->addConstituent("Q1");
+  this->addConstituent("P1");
+  return 0;
+}
+
 int TideFac::addConstituent(const std::string &harmonic) {
-  auto c = Constituent(harmonic);
-  if (c.isnull()) {
+  size_t idx = Constituent::constituentIndex(harmonic);
+  if (idx == Constituent::nullvalue<size_t>()) {
     return 1;
   } else {
-    this->m_constituents.push_back(c);
+    if (std::find(this->m_constituentIndex.begin(),
+                  this->m_constituentIndex.end(),
+                  idx) == this->m_constituentIndex.end()) {
+      this->m_constituentIndex.push_back(idx);
+      this->m_constituentNames.push_back(harmonic);
+    }
     return 0;
   }
 }
 
 void TideFac::calculate(const Date &d, const double latitude) {
-  this->computeAstronomicalArguments(d, latitude);
+  std::vector<double> F, U, V;
+  std::tie(F, U, V) = this->computeAstronomicalArguments(d, latitude);
+
+  this->m_curTime = d;
+
+  this->m_tides.clear();
+  this->m_tides.reserve(this->m_constituentIndex.size());
+  for (size_t i = 0; i < this->m_constituentIndex.size(); ++i) {
+    std::string name = this->m_constituentNames[i];
+    double nodeFactor = F[this->m_constituentIndex[i]];
+    double nfCorrection =
+        (U[this->m_constituentIndex[i]] + V[this->m_constituentIndex[i]]) *
+        360.0;
+    nfCorrection = nfCorrection < 0.0 ? nfCorrection + 360.0 : nfCorrection;
+    double frequency = Constituent::constituents()
+                           ->at(this->m_constituentIndex[i])
+                           ->frequency *
+                       TideFac::twopi() / 3600.0;
+    double etrf = Constituent::constituents()
+                      ->at(this->m_constituentIndex[i])
+                      ->earthreduc;
+    double amp = std::abs(Constituent::constituents()
+                              ->at(this->m_constituentIndex[i])
+                              ->doodsonamp) *
+                 0.2675;
+    this->m_tides.push_back(
+        Tide{name, amp, frequency, etrf, nodeFactor, nfCorrection});
+  }
 }
 
 void TideFac::calculate(const size_t dt, const double latitude) {
   this->calculate(this->m_refTime + dt, latitude);
 }
 
+void TideFac::show() const {
+  std::cout << "Tidal Factors for simulation time " << this->m_curTime << "\n";
+  for (auto &t : this->m_tides) {
+    std::cout << t.name << " " << t.amp << " " << t.freq << " " << t.etrf << " "
+              << t.nodefactor << " " << t.eqarg << "\n";
+  }
+}
+
 std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
                             const int idx) {
   std::complex<double> s = {0.0, 0.0};
-  for (size_t i = 0; i < 162; ++i) {
+  for (size_t i = 0; i < mat.size(); ++i) {
     if (Constituent::iconst()->at(i) == idx) {
       s += mat[i];
     }
@@ -38,8 +94,7 @@ std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
   return s;
 }
 
-std::tuple<std::vector<std::complex<double>>, std::vector<double>,
-           std::vector<double>>
+std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
   std::array<double, 6> astro;
   this->computeOrbitalParameters(d, &astro);
@@ -76,12 +131,15 @@ TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
   }
 
   std::vector<int> ind = Constituent::iconst_unique();
-  std::vector<std::complex<double>> F(ind.size(), 1.0);
-  std::vector<double> U(ind.size());
-  std::vector<double> V(ind.size());
+  std::vector<std::complex<double>> F(Constituent::constituents()->size());
+  std::vector<double> U(Constituent::constituents()->size());
+  std::vector<double> V(Constituent::constituents()->size());
   for (size_t i = 0; i < ind.size(); ++i) {
     F[ind[i] - 1] = 1.0 + matsum(mat, ind[i]);
-    U[i] = (std::log(F[i]).imag()) / (2.0 * TideFac::pi());
+  }
+
+  for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
+    U[i] = std::log(F[i]).imag() / TideFac::twopi();
     F[i] = std::abs(F[i]);
   }
 
@@ -99,20 +157,60 @@ TideFac::computeAstronomicalArguments(const Date &d, const double latitude) {
         exp2[p] = std::abs(exp1[p]);
       }
 
+      double product_1 = 1.0;
+      double product_2 = 0.0;
       for (size_t p = 0; p < ik.size(); ++p) {
-        double product_1 = 1.0;
-        double product_2 = 0.0;
-        for (size_t ii = 0; ii < ik.size(); ++ii) {
-          product_1 = product_1 * std::pow(F[iloc[p] - 1].real(), exp2[ii]);
-          product_2 += product_2 + U[iloc[p]] * exp1[ii];
-        }
-        F[i] = product_1;
-        U[i] = product_2;
+        product_1 = product_1 * std::pow(F[iloc[p] - 1].real(), exp2[p]);
+        product_2 = product_2 + U[iloc[p] - 1] * exp1[p];
       }
+      F[i] = product_1;
+      U[i] = product_2;
     }
   }
 
-  return {F, U, V};
+  for (size_t i = 0; i < V.size(); ++i) {
+    if (Constituent::constituents()->at(i)->doodson[0] !=
+        Constituent::nullvalue<double>()) {
+      V[i] = std::fmod(
+          Constituent::constituents()->at(i)->doodson[0] * astro[0] +
+              Constituent::constituents()->at(i)->doodson[1] * astro[1] +
+              Constituent::constituents()->at(i)->doodson[2] * astro[2] +
+              Constituent::constituents()->at(i)->doodson[3] * astro[3] +
+              Constituent::constituents()->at(i)->doodson[4] * astro[4] +
+              Constituent::constituents()->at(i)->doodson[5] * astro[5] +
+              Constituent::constituents()->at(i)->semi,
+          1.0);
+    } else {
+      V[i] = Constituent::nullvalue<double>();
+    }
+  }
+
+  for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
+    if (Constituent::constituents()->at(i)->ishallow !=
+        Constituent::nullvalue<int>()) {
+      int j = Constituent::constituents()->at(i)->nshallow;
+      int k = Constituent::constituents()->at(i)->ishallow;
+      std::vector<int> ik(j), iloc(j);
+      std::vector<double> exp1(j), exp2(j);
+      for (size_t p = 0; p < ik.size(); ++p) {
+        ik[p] = k + p;
+        iloc[p] = Constituent::shallow_iname()->at(ik[p] - 1);
+        exp1[p] = Constituent::shallow_coef()->at(ik[p] - 1);
+      }
+
+      double product_1 = 0.0;
+      for (size_t p = 0; p < ik.size(); ++p) {
+        product_1 = product_1 + V[iloc[p] - 1] * exp1[p];
+      }
+      V[i] = product_1;
+    }
+  }
+
+  std::vector<double> Fout(F.size());
+  std::transform(F.begin(), F.end(), Fout.begin(),
+                 [](std::complex<double> &d) { return d.real(); });
+
+  return {Fout, U, V};
 }
 
 void TideFac::computeOrbitalParameters(const Date &d,
@@ -186,3 +284,9 @@ void TideFac::computeOrbitalParameters(const Date &d,
 
   return;
 }
+
+Date TideFac::curTime() const { return this->m_curTime; }
+
+Date TideFac::refTime() const { return this->m_refTime; }
+
+void TideFac::setRefTime(const Date &refTime) { this->m_refTime = refTime; }

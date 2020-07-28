@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS  = tidefac testing
+SUBDIRS  = src testing bench
 CONFIG += ordered           

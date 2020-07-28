@@ -2,6 +2,7 @@ CONFIG -= qt
 
 TEMPLATE = lib
 DEFINES += TIDEFAC_LIBRARY
+TARGET = tidefac
 
 CONFIG += c++11
 
