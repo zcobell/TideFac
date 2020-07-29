@@ -50,9 +50,9 @@ option(TIDEFAC_PROJECT_WARNINGS "Enable compile time warnings as errors" OFF)
 if(TIDEFAC_PROJECT_WARNINGS)
   set_project_warnings(project_warnings)
 endif()
-include(cmake/Sanitizers.cmake)
-enable_sanitizers(project_options)
-include(cmake/StaticAnalyzers.cmake)
+#include(cmake/Sanitizers.cmake)
+#enable_sanitizers(project_options)
+#include(cmake/StaticAnalyzers.cmake)
 # ##############################################################################
 
 # ##############################################################################
