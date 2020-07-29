@@ -268,9 +268,6 @@ if(TIDEFAC_ENABLE_FORTRAN)
   add_library(tidefacf ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.F90)
   add_dependencies(tidefacf tidefac)
   target_link_libraries(tidefacf tidefac)
-  target_include_directories(
-    tidefacf
-    PRIVATE ${CMAKE_BINARY_DIR}/CMakeFiles/tidefacf )
   set_target_properties(tidefacf PROPERTIES VERSION ${TIDEFAC_VERSION_STRING}
                                             SOVERSION ${TIDEFAC_VERSION_MAJOR})
   set_target_properties(tidefacf PROPERTIES PUBLIC_HEADER "${MOD_LIST}")
