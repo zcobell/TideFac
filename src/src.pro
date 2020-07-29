@@ -38,7 +38,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     constituent.cpp \
     tidefac.cpp \
-    date.cpp
+    date.cpp \
+    tidefac_fortran.cpp
 
 HEADERS += \
     TideFac_global.h \

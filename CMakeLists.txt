@@ -16,7 +16,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(
   TideFac
-  LANGUAGES C CXX
+  LANGUAGES CXX
   VERSION 0.0.1)
 include(CheckIncludeFiles)
 include(CheckLibraryExists)
@@ -41,6 +41,11 @@ endif()
 add_library(project_warnings INTERFACE)
 include(cmake/Cache.cmake)
 include(cmake/CompilerWarnings.cmake)
+option(TIDEFAC_ENABLE_PYTHON "Enable the Python interface" OFF)
+option(TIDEFAC_ENABLE_FORTRAN "Enable the Fortran interface" OFF)
+if(TIDEFAC_ENABLE_FORTRAN)
+  enable_language(Fortran)
+endif(TIDEFAC_ENABLE_FORTRAN)
 option(TIDEFAC_PROJECT_WARNINGS "Enable compile time warnings as errors" OFF)
 if(TIDEFAC_PROJECT_WARNINGS)
   set_project_warnings(project_warnings)
@@ -63,15 +68,18 @@ endif(UNIX OR CYGWIN)
 # ##############################################################################
 # OPTION(COVERAGE "Export Code Coverage report from tests" OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-if(COVERAGE)
+if(TIDEFAC_COVERAGE)
   if(CMAKE_COMPILER_IS_GNUCXX)
     include(CodeCoverage)
     setup_target_for_coverage(tidefac_coverage tests coverage)
     set(CMAKE_CXX_FLAGS
         "${CMAKE_CXX_FLAGS} -Wall -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage"
     )
+    set(CMAKE_Fortran_FLAGS
+        "${CMAKE_Fortran_FLAGS} -Wall -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage"
+    )
   endif(CMAKE_COMPILER_IS_GNUCXX)
-endif(COVERAGE)
+endif(TIDEFAC_COVERAGE)
 # ##############################################################################
 
 # ##############################################################################
@@ -201,7 +209,8 @@ endif(
 set(TIDEFAC_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/constituent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/date.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac_fortran.cpp)
 
 add_library(tidefac ${TIDEFAC_SOURCES})
 
@@ -253,9 +262,37 @@ endif(APPLE)
 # ##############################################################################
 
 # ##############################################################################
+# TideFac Fortran
+# ##############################################################################
+if(TIDEFAC_ENABLE_FORTRAN)
+  add_library(tidefacf ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.F90)
+  add_dependencies(tidefacf tidefac)
+  target_link_libraries(tidefacf tidefac)
+  set_target_properties(tidefacf PROPERTIES VERSION ${TIDEFAC_VERSION_STRING}
+                                            SOVERSION ${TIDEFAC_VERSION_MAJOR})
+  set_target_properties(tidefacf PROPERTIES PUBLIC_HEADER "${MOD_LIST}")
+  set(MOD_LIST ${CMAKE_CURRENT_BINARY_DIR}/tidefacmodule.mod)
+  write_basic_package_version_file(
+    tidefacfConfigVersion.cmake
+    VERSION ${TIDEFAC_VERSION_STRING}
+    COMPATIBILITY SameMajorVersion)
+  install(
+    TARGETS tidefacf
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT TIDEFACF_RUNTIME
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT TIDEFACF_RUNTIME
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT TIDEFACF_DEVELOPMENT
+    PUBLIC_HEADER DESTINATION ${HEADER_DEST} COMPONENT TIDEFACF_DEVELOPMENT)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tidefacfConfigVersion.cmake
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+
+endif(TIDEFAC_ENABLE_FORTRAN)
+# ##############################################################################
+
+# ##############################################################################
 # PyTideFac Library
 # ##############################################################################
-if(SWIG_FOUND
+if(TIDEFAC_ENABLE_PYTHON
+   AND SWIG_FOUND
    AND PythonLibs_FOUND
    AND PythonInterp_FOUND)
 
@@ -357,10 +394,7 @@ if(SWIG_FOUND
   elseif(APPLE)
     set_target_properties(PyTidefac PROPERTIES SUFFIX ".so")
   endif(WIN32)
-endif(
-  SWIG_FOUND
-  AND PythonLibs_FOUND
-  AND PythonInterp_FOUND)
+endif()
 # ##############################################################################
 
 # ##############################################################################
@@ -371,7 +405,7 @@ if(UNIX OR CYGWIN)
     # ...C++ Testing
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testing)
 
-    set(TEST_LIST "testcase.cpp")
+    set(TEST_LIST "testcase.cpp" "testcase_fortran.F90")
 
     foreach(TESTFILE ${TEST_LIST})
       get_filename_component(TESTNAME ${TESTFILE} NAME_WE)
@@ -380,7 +414,7 @@ if(UNIX OR CYGWIN)
       target_include_directories(
         ${TESTNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
                             ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/catch2)
-      target_link_libraries(${TESTNAME} tidefac ${NETCDF_LIBS})
+      target_link_libraries(${TESTNAME} tidefac tidefacf)
       set_target_properties(
         ${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
                                ${CMAKE_CURRENT_BINARY_DIR}/cxx)
@@ -389,6 +423,12 @@ if(UNIX OR CYGWIN)
         NAME TEST_${TESTNAME}
         COMMAND ${CMAKE_CURRENT_BINARY_DIR}/cxx/${TESTNAME}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/testing)
+
+      get_filename_component(EXTENSION ${TESTFILE} EXT)
+      if(${EXTENSION} STREQUAL ".F90")
+        set_target_properties(${TESTNAME} PROPERTIES LINKER_LANGUAGE Fortran)
+      endif()
+
       if(CYGWIN)
         set_tests_properties(
           TEST_${TESTNAME}

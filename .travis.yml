@@ -9,6 +9,7 @@ addons:
       - swig3.0
       - lcov
       - libpython3-dev
+      - gfortran
 
 after_success:
   # Creating report
@@ -21,6 +22,6 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
 
 script:
-  - mkdir build; cd build; cmake -DCOVERAGE=ON -DTIDEFAC_BUILD_TESTS=ON ..
+  - mkdir build; cd build; cmake -DTIDEFAC_COVERAGE=ON -DTIDEFAC_ENABLE_FORTRAN=ON -DTIDEFAC_BUILD_TESTS=ON ..
   - cd build; make -j 2
   - cd build; CTEST_OUTPUT_ON_FAILURE=1 make test

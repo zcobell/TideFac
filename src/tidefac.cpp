@@ -35,12 +35,12 @@ int TideFac::addConstituent(const char *harmonic) {
   return this->addConstituent(std::string(harmonic));
 }
 
-std::string TideFac::toUpper(const std::string &s){
+std::string TideFac::toUpper(const std::string &s) {
   std::locale loc;
   std::string sout;
   sout.reserve(s.size());
-  for(auto &c : s){
-      sout.push_back(std::toupper(c,loc));
+  for (auto &c : s) {
+    sout.push_back(std::toupper(c, loc));
   }
   return sout;
 }

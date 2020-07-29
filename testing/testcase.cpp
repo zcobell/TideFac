@@ -17,11 +17,11 @@
 // along with TideFac.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------*/
 #define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 
 #include <iomanip>
 #include <limits>
 
-#include "catch.hpp"
 #include "tidefac.h"
 
 TEST_CASE("Major 8 Tide Factors", "[major8]") {
