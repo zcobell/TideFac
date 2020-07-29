@@ -268,10 +268,17 @@ if(TIDEFAC_ENABLE_FORTRAN)
   add_library(tidefacf ${CMAKE_CURRENT_SOURCE_DIR}/src/tidefac.F90)
   add_dependencies(tidefacf tidefac)
   target_link_libraries(tidefacf tidefac)
+  target_include_directories(
+    tidefacf
+    PRIVATE ${CMAKE_BINARY_DIR}/CMakeFiles/tidefacf )
   set_target_properties(tidefacf PROPERTIES VERSION ${TIDEFAC_VERSION_STRING}
                                             SOVERSION ${TIDEFAC_VERSION_MAJOR})
   set_target_properties(tidefacf PROPERTIES PUBLIC_HEADER "${MOD_LIST}")
-  set(MOD_LIST ${CMAKE_CURRENT_BINARY_DIR}/tidefacmodule.mod)
+  set(MOD_LIST
+      ${CMAKE_BINARY_DIR}/CMakeFiles/tidefacf/tidefacmodule.mod)
+  set_target_properties(
+    tidefacf PROPERTIES Fortran_MODULE_DIRECTORY
+                        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/tidefacf)
   write_basic_package_version_file(
     tidefacfConfigVersion.cmake
     VERSION ${TIDEFAC_VERSION_STRING}
@@ -427,6 +434,7 @@ if(UNIX OR CYGWIN)
       get_filename_component(EXTENSION ${TESTFILE} EXT)
       if(${EXTENSION} STREQUAL ".F90")
         set_target_properties(${TESTNAME} PROPERTIES LINKER_LANGUAGE Fortran)
+        target_include_directories(${TESTNAME} PRIVATE ${CMAKE_BINARY_DIR}/CMakeFiles/tidefacf )
       endif()
 
       if(CYGWIN)
