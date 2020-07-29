@@ -1,25 +1,7 @@
 
-        MODULE TIDEFAC_FORTRAN_TESTMOD
-            USE TIDEFACMODULE
-            IMPLICIT NONE
-
-            CONTAINS
-
-            SUBROUTINE testSubroutine()
-                IMPLICIT NONE
-
-                TYPE(TIDEFAC) :: tide
-                tide = TideFac()
-                tide%initialize = .true.
-
-            END SUBROUTINE testSubroutine
-
-
-        END MODULE TIDEFAC_FORTRAN_TESTMOD
 
         PROGRAM TIDEFAC_FORTRAN
             USE TIDEFACMODULE
-            USE TIDEFAC_FORTRAN_TESTMOD
             IMPLICIT NONE
             TYPE(TIDEFAC) :: tide
             REAL(8) :: correctAmp(8) = (/ 0.24289000000000002D0, &
@@ -56,10 +38,7 @@
             minute = 0
             second = 0
 
-            CALL testSubroutine()
-
             tide = TideFac()
-            tide%initialize = .TRUE.
             ierr = tide%setReferenceTime(2011,11,1,0,0,0)
 
             ierr = tide%referenceTime(yearq,monthq,dayq,hourq,minuteq,secondq)
@@ -107,6 +86,7 @@
                 ENDIF
             ENDDO
 
+            CALL purgeTidefac()
 
         END PROGRAM TIDEFAC_FORTRAN
 

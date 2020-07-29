@@ -16,8 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with TideFac.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------*/
+#include <memory>
+#include <vector>
+
 #include "tidefac.h"
-#include <iomanip>
+
+static std::vector<std::unique_ptr<TideFac>> s_tidefac;
 
 extern "C" {
 void* createTidefac();
@@ -35,19 +39,15 @@ double frequency(void* object, int index);
 double earthTideReductionFactor(void* object, int index);
 double nodeFactor(void* object, int index);
 double equilibriumArgument(void* object, int index);
+void purgeTidefac();
 }
 
 void* createTidefac() {
-  TideFac* f = new TideFac();
-  return reinterpret_cast<void*>(f);
+  s_tidefac.push_back(std::unique_ptr<TideFac>(new TideFac()));
+  return reinterpret_cast<void*>(s_tidefac.back().get());
 }
 
-void deleteTidefac(void* object) {
-  if (object) {
-    TideFac* f = reinterpret_cast<TideFac*>(object);
-    delete f;
-  }
-}
+void purgeTidefac() { s_tidefac.clear(); }
 
 int addConstituent(void* object, const char* name) {
   TideFac* f = reinterpret_cast<TideFac*>(object);

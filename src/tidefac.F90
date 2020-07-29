@@ -4,11 +4,8 @@
             IMPLICIT NONE
 
             TYPE TIDEFAC
-                LOGICAL,PUBLIC :: INITIALIZE = .TRUE.
                 TYPE(C_PTR),PRIVATE :: ptr
                 CONTAINS
-                    FINAL                :: destructor
-                    PROCEDURE,PASS(THIS) :: init => init_t
                     PROCEDURE            :: amplitude
                     PROCEDURE            :: frequency
                     PROCEDURE            :: earthTideReductionFactor
@@ -32,11 +29,9 @@
                     IMPLICIT NONE
                 END FUNCTION c_createTidefac
 
-                SUBROUTINE c_deleteTidefac(ptr) BIND(C,NAME="deleteTidefac")
-                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR
+                SUBROUTINE c_purgeTideFac() BIND(C,NAME="purgeTidefac")
                     IMPLICIT NONE
-                    TYPE(C_PTR),INTENT(IN),VALUE :: ptr
-                END SUBROUTINE c_deleteTidefac
+                END SUBROUTINE c_purgeTideFac
 
                 SUBROUTINE c_setReferenceTime(ptr,year,month,day,hour,minute,second) &
                         BIND(C,NAME="setReferenceTime")
@@ -122,22 +117,9 @@
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR
                     IMPLICIT NONE
                     TYPE(TIDEFAC) :: this
-                    this%initialize=.FALSE.
                     this%ptr = c_createTideFac()
                 END FUNCTION constructor
                     
-                SUBROUTINE destructor(this)
-                    IMPLICIT NONE
-                    TYPE(TIDEFAC),INTENT(IN) :: this
-                    IF(.NOT.this%initialize)RETURN
-                    CALL c_deleteTidefac(this%ptr)
-                END SUBROUTINE destructor
-
-                SUBROUTINE init_t(this)
-                    IMPLICIT NONE
-                    CLASS(TIDEFAC),INTENT(INOUT) :: this
-                END SUBROUTINE init_t
-
                 REAL(8) FUNCTION amplitude(this,idx) RESULT(amp)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
@@ -215,5 +197,10 @@
                     REAL(8),INTENT(IN) :: latitude
                     CALL c_calculateWithDate(this%ptr,year,month,day,hour,minute,second,latitude)
                 END FUNCTION calculateWithDate
+
+                SUBROUTINE purgeTidefac() 
+                    IMPLICIT NONE
+                    CALL c_purgeTidefac()
+                END SUBROUTINE purgeTidefac
 
         END MODULE TIDEFACMODULE
