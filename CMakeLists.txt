@@ -413,7 +413,7 @@ if(UNIX OR CYGWIN)
 
     foreach(TESTFILE ${TEST_LIST})
       get_filename_component(TESTNAME ${TESTFILE} NAME_WE)
-      add_executable(${TESTNAME} ${CMAKE_SOURCE_DIR}/testing/${TESTFILE})
+      add_executable(${TESTNAME} ${CMAKE_CURRENT_SOURCE_DIR}/testing/${TESTFILE})
       add_dependencies(${TESTNAME} tidefac)
       target_include_directories(
         ${TESTNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
