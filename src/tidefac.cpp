@@ -82,6 +82,76 @@ void TideFac::calculate(const double dt, const double latitude) {
   this->calculate(static_cast<size_t>(std::floor(dt)), latitude);
 }
 
+void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
+  if (this->m_constituentIndex.size() == 0) {
+    std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
+    return;
+  }
+  std::vector<Date> dateList;
+  size_t dt = std::floor((d2.toSeconds() - d1.toSeconds()) / 1000.0);
+  dateList.resize(1000);
+  for (size_t i = 0; i < dateList.size(); ++i) {
+    dateList[i] = d1 + i * dt;
+  }
+
+  std::vector<double> mean_nodeFactor(this->m_constituentIndex.size(), 0.0);
+  std::vector<double> mean_nfCorrection(this->m_constituentIndex.size(), 0.0);
+  std::vector<double> astro;
+
+  for (size_t i = 0; i < 1000; ++i) {
+    std::vector<double> F, U, V;
+    std::tie(F, U, V) =
+        this->computeAstronomicalArguments(dateList[i], latitude);
+
+    if (i == 0) astro = V;  // astro arg at start used
+
+    for (size_t j = 0; j < this->m_constituentIndex.size(); ++j) {
+      mean_nodeFactor[j] += F[this->m_constituentIndex[j]];
+      mean_nfCorrection[j] += U[this->m_constituentIndex[j]];
+    }
+  }
+
+  this->m_tides.clear();
+  this->m_tides.reserve(this->m_constituentIndex.size());
+  for (size_t i = 0; i < this->m_constituentIndex.size(); ++i) {
+    double nf = mean_nodeFactor[i] / 1000.0;
+    double nc = (mean_nfCorrection[i] / 1000.0) * 360.0;
+    double eq =
+        (mean_nfCorrection[i] / 1000.0 + astro[this->m_constituentIndex[i]]) *
+        360.0;
+    double aa = astro[this->m_constituentIndex[i]] * 360.0;
+
+    if (nc < 0.0) {
+      nc += 360.0;
+    }
+
+    if (eq < 0.0) {
+      eq += 360.0;
+    }
+
+    if (aa < 0.0) {
+      aa += 360.0;
+    }
+
+    double frequency = Constituent::constituents()
+                           ->at(this->m_constituentIndex[i])
+                           ->frequency *
+                       TideFac::twopi() / 3600.0;
+    double etrf = Constituent::constituents()
+                      ->at(this->m_constituentIndex[i])
+                      ->earthreduc;
+    double amp = std::abs(Constituent::constituents()
+                              ->at(this->m_constituentIndex[i])
+                              ->doodsonamp) *
+                 0.2675;
+
+    this->m_tides.push_back(Tide(this->m_constituentNames[i], amp, frequency,
+                                 etrf, nf, eq, nc, aa));
+  }
+
+  this->m_curTime = d1 + d2.toSeconds() / 2;
+}
+
 void TideFac::calculate(const Date &d, const double latitude) {
   if (this->m_constituentIndex.size() == 0) {
     std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
@@ -96,12 +166,25 @@ void TideFac::calculate(const Date &d, const double latitude) {
   this->m_tides.clear();
   this->m_tides.reserve(this->m_constituentIndex.size());
   for (size_t i = 0; i < this->m_constituentIndex.size(); ++i) {
-    std::string name = this->m_constituentNames[i];
     double nodeFactor = F[this->m_constituentIndex[i]];
-    double nfCorrection =
+    double nc = U[this->m_constituentIndex[i]] * 360.0;
+    double eq =
         (U[this->m_constituentIndex[i]] + V[this->m_constituentIndex[i]]) *
         360.0;
-    nfCorrection = nfCorrection < 0.0 ? nfCorrection + 360.0 : nfCorrection;
+    double aa = V[this->m_constituentIndex[i]] * 360.0;
+
+    if (nc < 0.0) {
+      nc += 360.0;
+    }
+
+    if (eq < 0.0) {
+      eq += 360.0;
+    }
+
+    if (aa < 0.0) {
+      aa += 360.0;
+    }
+
     double frequency = Constituent::constituents()
                            ->at(this->m_constituentIndex[i])
                            ->frequency *
@@ -113,8 +196,9 @@ void TideFac::calculate(const Date &d, const double latitude) {
                               ->at(this->m_constituentIndex[i])
                               ->doodsonamp) *
                  0.2675;
-    this->m_tides.push_back(
-        Tide{name, amp, frequency, etrf, nodeFactor, nfCorrection});
+
+    this->m_tides.push_back(Tide(this->m_constituentNames[i], amp, frequency,
+                                 etrf, nodeFactor, eq, nc, aa));
   }
 }
 
@@ -337,6 +421,16 @@ double TideFac::nodeFactor(size_t index) {
 double TideFac::equilibriumArgument(size_t index) {
   assert(index < this->m_tides.size());
   return this->m_tides[index].eqarg;
+}
+
+double TideFac::nodefactorCorrection(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].nodecorrection;
+}
+
+double TideFac::astronomicArgument(size_t index) {
+  assert(index < this->m_tides.size());
+  return this->m_tides[index].astroarg;
 }
 
 Date TideFac::refTime() const { return this->m_refTime; }

@@ -11,12 +11,16 @@
                     PROCEDURE            :: earthTideReductionFactor
                     PROCEDURE            :: nodeFactor
                     PROCEDURE            :: equilibriumArgument
+                    PROCEDURE            :: nodefactorCorrection
+                    PROCEDURE            :: astronomicArgument
                     PROCEDURE            :: addConstituent
                     PROCEDURE            :: referenceTime
                     PROCEDURE            :: setReferenceTime
                     PROCEDURE            :: calculateWithDt
                     PROCEDURE            :: calculateWithDate
-                    GENERIC,PUBLIC       :: calculate => calculateWithDt,calculateWithDate
+                    PROCEDURE            :: calculateWithTwoDates
+                    GENERIC,PUBLIC       :: calculate => calculateWithDt,calculateWithDate,&
+                                                         calculateWithTwoDates
             END TYPE TIDEFAC
 
             INTERFACE TIDEFAC
@@ -92,6 +96,20 @@
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
                 END FUNCTION c_equilibriumArgument
+                
+                REAL(8) FUNCTION c_nodefactorCorrection(ptr,idx) BIND(C,NAME="nodefactorCorrection") RESULT(ea)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_nodefactorCorrection
+                
+                REAL(8) FUNCTION c_astronomicArgument(ptr,idx) BIND(C,NAME="astronomicArgument") RESULT(aa)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_astronomicArgument
 
                 SUBROUTINE c_calculateWithDt(ptr,dt,lat) BIND(C,NAME="calculateWithDt")
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_DOUBLE
@@ -108,6 +126,17 @@
                     INTEGER(C_INT),INTENT(IN),VALUE :: year,month,day,hour,minute,second
                     REAL(C_DOUBLE),INTENT(IN),VALUE :: lat
                 END SUBROUTINE c_calculateWithDate
+                
+                SUBROUTINE c_calculateWithTwoDates(ptr,year1,month1,day1,hour1,minute1,second1,&
+                                                       year2,month2,day2,hour2,minute2,second2,&
+                                                       lat) BIND(C,NAME="calculateWithTwoDates")
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT,C_DOUBLE
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: year1,month1,day1,hour1,minute1,second1
+                    INTEGER(C_INT),INTENT(IN),VALUE :: year2,month2,day2,hour2,minute2,second2
+                    REAL(C_DOUBLE),INTENT(IN),VALUE :: lat
+                END SUBROUTINE c_calculateWithTwoDates
 
             END INTERFACE
 
@@ -154,6 +183,20 @@
                     INTEGER,INTENT(IN)           :: idx
                     ea = c_equilibriumArgument(this%ptr,idx)
                 END FUNCTION equilibriumArgument
+                
+                REAL(8) FUNCTION nodefactorCorrection(this,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_nodefactorCorrection(this%ptr,idx)
+                END FUNCTION nodefactorCorrection
+                
+                REAL(8) FUNCTION astronomicArgument(this,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_astronomicArgument(this%ptr,idx)
+                END FUNCTION astronomicArgument
 
                 INTEGER FUNCTION addConstituent(this,harmonicName) RESULT(ierr)
                     USE,INTRINSIC                :: ISO_C_BINDING,ONLY:C_PTR,C_NULL_CHAR
@@ -197,6 +240,18 @@
                     REAL(8),INTENT(IN) :: latitude
                     CALL c_calculateWithDate(this%ptr,year,month,day,hour,minute,second,latitude)
                 END FUNCTION calculateWithDate
+                
+                INTEGER FUNCTION calculateWithTwoDates(this,year1,month1,day1,hour1,minute1,second1,&
+                                                            year2,month2,day2,hour2,minute2,second2,&
+                                                            latitude) RESULT(ierr)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN) :: year1,month1,day1,hour1,minute1,second1
+                    INTEGER,INTENT(IN) :: year2,month2,day2,hour2,minute2,second2
+                    REAL(8),INTENT(IN) :: latitude
+                    CALL c_calculateWithTwoDates(this%ptr,year1,month1,day1,hour1,minute1,second1,&
+                                                          year2,month2,day2,hour2,minute2,second2,latitude)
+                END FUNCTION calculateWithTwoDates
 
                 SUBROUTINE purgeTidefac() 
                     IMPLICIT NONE

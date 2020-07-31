@@ -34,11 +34,17 @@ void referenceTime(void* object, int& year, int& month, int& day, int& hour,
 void calculateWithDt(void* object, double dt, const double latitude);
 void calculateWithDate(void* object, int year, int month, int day, int hour,
                        int minute, int second, double latitude);
+void calculateWithTwoDates(void* object, int year1, int month1, int day1,
+                           int hour1, int minute1, int second1, int year2,
+                           int month2, int day2, int hour2, int minute2,
+                           int second2, double latitude);
 double amplitude(void* object, int index);
 double frequency(void* object, int index);
 double earthTideReductionFactor(void* object, int index);
 double nodeFactor(void* object, int index);
 double equilibriumArgument(void* object, int index);
+double nodefactorCorrection(void* object, int index);
+double astronomicArgument(void* object, int index);
 void purgeTidefac();
 }
 
@@ -83,6 +89,15 @@ void calculateWithDate(void* object, int year, int month, int day, int hour,
   f->calculate(Date(year, month, day, hour, minute, second), latitude);
 }
 
+void calculateWithTwoDates(void* object, int year1, int month1, int day1,
+                           int hour1, int minute1, int second1, int year2,
+                           int month2, int day2, int hour2, int minute2,
+                           int second2, double latitude) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  f->calculate(Date(year1, month1, day1, hour1, minute1, second1),
+               Date(year2, month2, day2, hour2, minute2, second2), latitude);
+}
+
 double amplitude(void* object, int index) {
   TideFac* f = reinterpret_cast<TideFac*>(object);
   return f->amplitude(index - 1);
@@ -106,4 +121,14 @@ double nodeFactor(void* object, int index) {
 double equilibriumArgument(void* object, int index) {
   TideFac* f = reinterpret_cast<TideFac*>(object);
   return f->equilibriumArgument(index - 1);
+}
+
+double nodefactorCorrection(void* object, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->nodefactorCorrection(index - 1);
+}
+
+double astronomicArgument(void* object, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->astronomicArgument(index - 1);
 }

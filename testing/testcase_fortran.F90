@@ -24,6 +24,14 @@
                                               1.010033667119077D0, 0.9493529816818805D0, &
                                               0.9865471373144313D0, 0.9761350226537572D0, &
                                               0.9748772611466947D0, 1.0016946305592558D0 /)
+            REAL(8) :: correctAstro(8) = (/ 239.65492245536097D0, 0.0D0, 164.32483425682037D0, &
+                                            79.88188330133653D0, 309.94094165066826D0, &
+                                            289.7139808046927D0, 214.3838926061521D0, &
+                                            50.059058349331735D0 /)
+            REAL(8) :: correctNodefacCorrection(8) = (/ 2.1731074244177875D0, 359.88858705269575D0, &
+                                                        1.8970867762275152D0, 17.769348613397614D0, &
+                                                        8.883570557211046D0, 348.68678705977345D0, &
+                                                        348.5130812984089D0, 0.5770160256675876D0 /)
 
             REAL(8) :: tol = 100D0*EPSILON(1D0)
             INTEGER :: I
@@ -82,6 +90,16 @@
                 IF(tide%nodeFactor(i)-correctNodeFac(i).GT.tol)THEN
                     WRITE(*,'(A)') "ERROR: Node factor incorrect"
                     WRITE(*,*) I,tide%nodeFactor(i),correctNodeFac(i)
+                    CALL EXIT(1)
+                ENDIF
+                IF(tide%nodefactorCorrection(i)-correctNodefacCorrection(i).GT.tol)THEN
+                    WRITE(*,'(A)') "ERROR: Nodefactor Correction incorrect"
+                    WRITE(*,*) I,tide%nodefactorCorrection(i),correctNodefacCorrection(i)
+                    CALL EXIT(1)
+                ENDIF
+                IF(tide%astronomicArgument(i)-correctAstro(i).GT.tol)THEN
+                    WRITE(*,'(A)') "ERROR: Astronomic factor incorrect"
+                    WRITE(*,*) I,tide%astronomicArgument(i),correctAstro(i)
                     CALL EXIT(1)
                 ENDIF
             ENDDO

@@ -24,8 +24,8 @@
 #include <string>
 #include <vector>
 
-#include "tidefac_global.h"
 #include "date.h"
+#include "tidefac_global.h"
 
 class TideFac {
  public:
@@ -42,6 +42,8 @@ class TideFac {
   void TIDEFAC_EXPORT calculate(const Date &d, const double latitude);
   void TIDEFAC_EXPORT calculate(const size_t dt, const double latitude);
   void TIDEFAC_EXPORT calculate(const double dt, const double latitude);
+  void TIDEFAC_EXPORT calculate(const Date &d1, const Date &d2,
+                                const double latitude);
 
   void TIDEFAC_EXPORT show() const;
 
@@ -53,15 +55,30 @@ class TideFac {
   double TIDEFAC_EXPORT earthTideReductionFactor(size_t index);
   double TIDEFAC_EXPORT nodeFactor(size_t index);
   double TIDEFAC_EXPORT equilibriumArgument(size_t index);
+  double TIDEFAC_EXPORT nodefactorCorrection(size_t index);
+  double TIDEFAC_EXPORT astronomicArgument(size_t index);
 
  private:
   struct Tide {
+    Tide(const std::string &name, const double amp, const double freq,
+         const double etrf, const double nodefactor, const double eqarg,
+         const double nodecorrection, const double astroarg)
+        : name(name),
+          amp(amp),
+          freq(freq),
+          etrf(etrf),
+          nodefactor(nodefactor),
+          eqarg(eqarg),
+          nodecorrection(nodecorrection),
+          astroarg(astroarg) {}
     std::string name;
     double amp;
     double freq;
     double etrf;
     double nodefactor;
     double eqarg;
+    double nodecorrection;
+    double astroarg;
   };
 
   static std::string toUpper(const std::string &s);
