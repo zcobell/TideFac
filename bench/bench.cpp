@@ -27,10 +27,21 @@ static void tide_calc(benchmark::State &state) {
   size_t i = 0;
   while (state.KeepRunning()) {
     t.calculate(i, 29.5);
-    i = i * 86400;
+    i += 86400;
+  }
+}
+
+static void tide_grid(benchmark::State &state) {
+  TideFac t(-90.0, 90.0, 0.25);
+  t.addMajor8();
+  size_t i = 0;
+  while (state.KeepRunning()) {
+    t.calculate(i);
+    i += 86400;
   }
 }
 
 BENCHMARK(tide_calc);
+BENCHMARK(tide_grid);
 
 BENCHMARK_MAIN();

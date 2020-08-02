@@ -174,3 +174,20 @@ TEST_CASE("Major 8 Mean Values", "[major8mean]") {
   REQUIRE(f.astronomicArgument(6) == Approx(214.3838926061521));
   REQUIRE(f.astronomicArgument(7) == Approx(50.059058349331735));
 }
+
+TEST_CASE("Latitude Grid", "[latitudegrid]") {
+  TideFac f(-90.0, 90.0, 0.25);
+  f.addMajor8();
+  f.calculate(Date(2011, 11, 1, 0, 0, 0));
+
+  size_t i;
+  double w;
+
+  f.getInterpolationFactors(-89.752, i, w);
+  REQUIRE(i == 1);
+  REQUIRE(w == Approx(0.008));
+
+  f.getInterpolationFactors(89.752, i, w);
+  REQUIRE(i == 720);
+  REQUIRE(w == Approx(0.992));
+}

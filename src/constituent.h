@@ -49,7 +49,7 @@ class Constituent {
   static const std::array<double, 162> *amprat();
   static const std::array<int, 162> *ilatfac();
   static const std::array<int, 162> *iconst();
-  static std::vector<int> iconst_unique();
+  static const std::array<int, 37> *iconst_unique();
   static const std::array<const TC *, 146> *constituents();
   static const std::array<int, 251> *shallow_iconst();
   static const std::array<double, 251> *shallow_coef();

@@ -38,6 +38,7 @@ void calculateWithTwoDates(void* object, int year1, int month1, int day1,
                            int hour1, int minute1, int second1, int year2,
                            int month2, int day2, int hour2, int minute2,
                            int second2, double latitude);
+void calculateGrid(void* object, double dt);
 double amplitude(void* object, int index);
 double frequency(void* object, int index);
 double earthTideReductionFactor(void* object, int index);
@@ -45,12 +46,35 @@ double nodeFactor(void* object, int index);
 double equilibriumArgument(void* object, int index);
 double nodefactorCorrection(void* object, int index);
 double astronomicArgument(void* object, int index);
+double amplitudeGrid(void* object, int gridIndex, int index);
+double frequencyGrid(void* object, int gridIndex, int index);
+double earthTideReductionFactorGrid(void* object, int gridIndex, int index);
+double nodeFactorGrid(void* object, int gridIndex, int index);
+double equilibriumArgumentGrid(void* object, int gridIndex, int index);
+double nodefactorCorrectionGrid(void* object, int gridIndex, int index);
+double astronomicArgumentGrid(void* object, int gridIndex, int index);
 void purgeTidefac();
+int generateLatitudeGrid(void* object, double latmin, double latmax,
+                         double resolution);
+int getInterpolationFactors(void* object, double latitude,
+                            unsigned long& gridIndex, double& weight);
 }
 
 void* createTidefac() {
   s_tidefac.push_back(std::unique_ptr<TideFac>(new TideFac()));
   return reinterpret_cast<void*>(s_tidefac.back().get());
+}
+
+int generateLatitudeGrid(void* object, double latmin, double latmax,
+                         double resolution) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->generateLatitudeGrid(latmin, latmax, resolution);
+}
+
+int getInterpolationFactors(void* object, double latitude,
+                            unsigned long& gridIndex, double& weight) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->getInterpolationFactors(latitude, gridIndex, weight);
 }
 
 void purgeTidefac() { s_tidefac.clear(); }
@@ -76,6 +100,11 @@ void referenceTime(void* object, int& year, int& month, int& day, int& hour,
   hour = d.hour();
   minute = d.minute();
   second = d.second();
+}
+
+void calculateGrid(void* object, double dt) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  f->calculate(dt);
 }
 
 void calculateWithDt(void* object, double dt, double latitude) {
@@ -131,4 +160,39 @@ double nodefactorCorrection(void* object, int index) {
 double astronomicArgument(void* object, int index) {
   TideFac* f = reinterpret_cast<TideFac*>(object);
   return f->astronomicArgument(index - 1);
+}
+
+double amplitudeGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->amplitude(index - 1, gridIndex - 1);
+}
+
+double frequencyGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->frequency(index - 1, gridIndex - 1);
+}
+
+double earthTideReductionFactorGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->earthTideReductionFactor(index - 1, gridIndex - 1);
+}
+
+double nodeFactorGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->nodeFactor(index - 1, gridIndex - 1);
+}
+
+double equilibriumArgumentGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->equilibriumArgument(index - 1, gridIndex - 1);
+}
+
+double nodefactorCorrectionGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->nodefactorCorrection(index - 1, gridIndex - 1);
+}
+
+double astronomicArgumentGrid(void* object, int gridIndex, int index) {
+  TideFac* f = reinterpret_cast<TideFac*>(object);
+  return f->astronomicArgument(index - 1, gridIndex - 1);
 }

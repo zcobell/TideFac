@@ -6,21 +6,42 @@
             TYPE TIDEFAC
                 TYPE(C_PTR),PRIVATE :: ptr
                 CONTAINS
-                    PROCEDURE            :: amplitude
-                    PROCEDURE            :: frequency
-                    PROCEDURE            :: earthTideReductionFactor
-                    PROCEDURE            :: nodeFactor
-                    PROCEDURE            :: equilibriumArgument
-                    PROCEDURE            :: nodefactorCorrection
-                    PROCEDURE            :: astronomicArgument
+                    PROCEDURE            :: generateLatitudeGrid
+                    PROCEDURE            :: getInterpolationFactors
+                    PROCEDURE            :: amplitudeSingle
+                    PROCEDURE            :: frequencySingle
+                    PROCEDURE            :: earthTideReductionFactorSingle
+                    PROCEDURE            :: nodeFactorSingle
+                    PROCEDURE            :: equilibriumArgumentSingle
+                    PROCEDURE            :: nodefactorCorrectionSingle
+                    PROCEDURE            :: astronomicArgumentSingle
+                    PROCEDURE            :: amplitudeGrid
+                    PROCEDURE            :: frequencyGrid
+                    PROCEDURE            :: earthTideReductionFactorGrid
+                    PROCEDURE            :: nodeFactorGrid
+                    PROCEDURE            :: equilibriumArgumentGrid
+                    PROCEDURE            :: nodefactorCorrectionGrid
+                    PROCEDURE            :: astronomicArgumentGrid
                     PROCEDURE            :: addConstituent
                     PROCEDURE            :: referenceTime
                     PROCEDURE            :: setReferenceTime
                     PROCEDURE            :: calculateWithDt
                     PROCEDURE            :: calculateWithDate
                     PROCEDURE            :: calculateWithTwoDates
+                    PROCEDURE            :: calculateGrid
                     GENERIC,PUBLIC       :: calculate => calculateWithDt,calculateWithDate,&
-                                                         calculateWithTwoDates
+                                                         calculateWithTwoDates,calculateGrid
+                    GENERIC,PUBLIC       :: amplitude => amplitudeSingle,amplitudeGrid
+                    GENERIC,PUBLIC       :: frequency => frequencySingle,frequencyGrid
+                    GENERIC,PUBLIC       :: earthTideReductionFactor => earthTideReductionFactorSingle,&
+                                                earthTideReductionFactorGrid
+                    GENERIC,PUBLIC       :: nodeFactor => nodeFactorSingle,nodeFactorGrid
+                    GENERIC,PUBLIC       :: equilibriumArgument => equilibriumArgumentSingle,&
+                                                equilibriumArgumentGrid
+                    GENERIC,PUBLIC       :: nodeFactorCorrection => nodeFactorCorrectionSingle,&
+                                                nodeFactorCorrectionGrid
+                    GENERIC,PUBLIC       :: astronomicArgument => astronomicArgumentSingle,&
+                                                astronomicArgumentGrid
             END TYPE TIDEFAC
 
             INTERFACE TIDEFAC
@@ -37,6 +58,24 @@
                     IMPLICIT NONE
                 END SUBROUTINE c_purgeTideFac
 
+                INTEGER(C_INT) FUNCTION c_generateLatitudeGrid(ptr,latmin,latmax,resolution) &
+                        BIND(C,NAME="generateLatitudeGrid") RESULT(ierr)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT,C_DOUBLE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    REAL(C_DOUBLE),INTENT(IN),VALUE :: latmin
+                    REAL(C_DOUBLE),INTENT(IN),VALUE :: latmax
+                    REAL(C_DOUBLE),INTENT(IN),VALUE :: resolution
+                END FUNCTION c_generateLatitudeGrid
+
+                INTEGER(C_INT) FUNCTION c_getInterpolationFactors(ptr,latitude,gridIndex,weight) &
+                        BIND(C,NAME="getInterpolationFactors") RESULT(ierr)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_LONG,C_DOUBLE,C_INT
+                    TYPE(C_PTR),INTENT(IN),VALUE      :: ptr
+                    REAL(C_DOUBLE),INTENT(IN),VALUE   :: latitude
+                    INTEGER(C_INT),INTENT(OUT)        :: gridIndex
+                    REAL(C_DOUBLE),INTENT(OUT)        :: weight
+                END FUNCTION c_getInterpolationFactors
+                    
                 SUBROUTINE c_setReferenceTime(ptr,year,month,day,hour,minute,second) &
                         BIND(C,NAME="setReferenceTime")
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
@@ -61,55 +100,112 @@
                     CHARACTER(KIND=C_CHAR),INTENT(IN) :: harmonicName
                 END FUNCTION c_addConstituent
 
-                REAL(8) FUNCTION c_amplitude(ptr,idx) BIND(C,NAME="amplitude") RESULT(amp)
+                REAL(8) FUNCTION c_amplitudeSingle(ptr,idx) BIND(C,NAME="amplitude") RESULT(amp)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_amplitude
+                END FUNCTION c_amplitudeSingle
                 
-                REAL(8) FUNCTION c_frequency(ptr,idx) BIND(C,NAME="frequency") RESULT(freq)
+                REAL(8) FUNCTION c_amplitudeGrid(ptr,grid,idx) BIND(C,NAME="amplitudeGrid") RESULT(amp)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_amplitudeGrid
+                
+                REAL(8) FUNCTION c_frequencySingle(ptr,idx) BIND(C,NAME="frequency") RESULT(freq)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_frequency
+                END FUNCTION c_frequencySingle
                 
-                REAL(8) FUNCTION c_earthTideReductionFactor(ptr,idx) &
+                REAL(8) FUNCTION c_frequencyGrid(ptr,grid,idx) BIND(C,NAME="frequencyGrid") RESULT(freq)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                END FUNCTION c_frequencyGrid
+                
+                REAL(8) FUNCTION c_earthTideReductionFactorSingle(ptr,idx) &
                         BIND(C,NAME="earthTideReductionFactor") RESULT(etrf)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_earthTideReductionFactor
+                END FUNCTION c_earthTideReductionFactorSingle
                 
-                REAL(8) FUNCTION c_nodeFactor(ptr,idx) BIND(C,NAME="nodeFactor") RESULT(nf)
+                REAL(8) FUNCTION c_earthTideReductionFactorGrid(ptr,grid,idx) &
+                        BIND(C,NAME="earthTideReductionFactorGrid") RESULT(etrf)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_earthTideReductionFactorGrid
+                
+                REAL(8) FUNCTION c_nodeFactorSingle(ptr,idx) BIND(C,NAME="nodeFactor") RESULT(nf)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_nodeFactor
+                END FUNCTION c_nodeFactorSingle
                 
-                REAL(8) FUNCTION c_equilibriumArgument(ptr,idx) BIND(C,NAME="equilibriumArgument") RESULT(ea)
+                REAL(8) FUNCTION c_nodeFactorGrid(ptr,grid,idx) BIND(C,NAME="nodeFactorGrid") RESULT(nf)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_nodeFactorGrid
+                
+                REAL(8) FUNCTION c_equilibriumArgumentSingle(ptr,idx) BIND(C,NAME="equilibriumArgument") RESULT(ea)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_equilibriumArgument
+                END FUNCTION c_equilibriumArgumentSingle
                 
-                REAL(8) FUNCTION c_nodefactorCorrection(ptr,idx) BIND(C,NAME="nodefactorCorrection") RESULT(ea)
+                REAL(8) FUNCTION c_equilibriumArgumentGrid(ptr,grid,idx) BIND(C,NAME="equilibriumArgumentGrid") RESULT(ea)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_equilibriumArgumentGrid
+                
+                REAL(8) FUNCTION c_nodefactorCorrectionSingle(ptr,idx) BIND(C,NAME="nodefactorCorrection") RESULT(ea)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_nodefactorCorrection
+                END FUNCTION c_nodefactorCorrectionSingle
+
+                REAL(8) FUNCTION c_nodefactorCorrectionGrid(ptr,grid,idx) BIND(C,NAME="nodefactorCorrectionGrid") RESULT(ea)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_nodefactorCorrectionGrid
                 
-                REAL(8) FUNCTION c_astronomicArgument(ptr,idx) BIND(C,NAME="astronomicArgument") RESULT(aa)
+                REAL(8) FUNCTION c_astronomicArgumentSingle(ptr,idx) BIND(C,NAME="astronomicArgument") RESULT(aa)
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
                     IMPLICIT NONE
                     TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
                     INTEGER(C_INT),INTENT(IN),VALUE :: idx
-                END FUNCTION c_astronomicArgument
+                END FUNCTION c_astronomicArgumentSingle
+                
+                REAL(8) FUNCTION c_astronomicArgumentGrid(ptr,grid,idx) BIND(C,NAME="astronomicArgumentGrid") RESULT(aa)
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_INT
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    INTEGER(C_INT),INTENT(IN),VALUE :: grid
+                    INTEGER(C_INT),INTENT(IN),VALUE :: idx
+                END FUNCTION c_astronomicArgumentGrid
 
                 SUBROUTINE c_calculateWithDt(ptr,dt,lat) BIND(C,NAME="calculateWithDt")
                     USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_DOUBLE
@@ -138,6 +234,13 @@
                     REAL(C_DOUBLE),INTENT(IN),VALUE :: lat
                 END SUBROUTINE c_calculateWithTwoDates
 
+                SUBROUTINE c_calculateGrid(ptr,dt) BIND(C,NAME="calculateGrid")
+                    USE,INTRINSIC :: ISO_C_BINDING,ONLY:C_PTR,C_DOUBLE
+                    IMPLICIT NONE
+                    TYPE(C_PTR),INTENT(IN),VALUE    :: ptr
+                    REAL(C_DOUBLE),INTENT(IN),VALUE :: dt
+                END SUBROUTINE c_calculateGrid
+
             END INTERFACE
 
             CONTAINS
@@ -149,54 +252,110 @@
                     this%ptr = c_createTideFac()
                 END FUNCTION constructor
                     
-                REAL(8) FUNCTION amplitude(this,idx) RESULT(amp)
+                REAL(8) FUNCTION amplitudeSingle(this,idx) RESULT(amp)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     INTEGER,INTENT(IN)           :: idx
-                    amp = c_amplitude(this%ptr,idx)
-                END FUNCTION amplitude
-                
-                REAL(8) FUNCTION frequency(this,idx) RESULT(freq)
-                    IMPLICIT NONE
-                    CLASS(TIDEFAC),INTENT(INOUT) :: this
-                    INTEGER,INTENT(IN)           :: idx
-                    freq = c_frequency(this%ptr,idx)
-                END FUNCTION frequency
-                
-                REAL(8) FUNCTION earthTideReductionFactor(this,idx) RESULT(etrf)
-                    IMPLICIT NONE
-                    CLASS(TIDEFAC),INTENT(INOUT) :: this
-                    INTEGER,INTENT(IN)           :: idx
-                    etrf = c_earthTideReductionFactor(this%ptr,idx)
-                END FUNCTION earthTideReductionFactor
+                    amp = c_amplitudeSingle(this%ptr,idx)
+                END FUNCTION amplitudeSingle
 
-                REAL(8) FUNCTION nodeFactor(this,idx) RESULT(nf)
+                REAL(8) FUNCTION amplitudeGrid(this,grid,idx) RESULT(amp)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
                     INTEGER,INTENT(IN)           :: idx
-                    nf = c_nodeFactor(this%ptr,idx)
-                END FUNCTION nodeFactor
+                    amp = c_amplitudeGrid(this%ptr,grid,idx)
+                END FUNCTION amplitudeGrid
                 
-                REAL(8) FUNCTION equilibriumArgument(this,idx) RESULT(ea)
+                REAL(8) FUNCTION frequencySingle(this,idx) RESULT(freq)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     INTEGER,INTENT(IN)           :: idx
-                    ea = c_equilibriumArgument(this%ptr,idx)
-                END FUNCTION equilibriumArgument
+                    freq = c_frequencySingle(this%ptr,idx)
+                END FUNCTION frequencySingle
+
+                REAL(8) FUNCTION frequencyGrid(this,grid,idx) RESULT(freq)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    freq = c_frequencyGrid(this%ptr,grid,idx)
+                END FUNCTION frequencyGrid
+
+                REAL(8) FUNCTION earthTideReductionFactorSingle(this,idx) RESULT(etrf)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: idx
+                    etrf = c_earthTideReductionFactorSingle(this%ptr,idx)
+                END FUNCTION earthTideReductionFactorSingle
                 
-                REAL(8) FUNCTION nodefactorCorrection(this,idx) RESULT(aa)
+                REAL(8) FUNCTION earthTideReductionFactorGrid(this,grid,idx) RESULT(etrf)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    etrf = c_earthTideReductionFactorGrid(this%ptr,grid,idx)
+                END FUNCTION earthTideReductionFactorGrid
+
+                REAL(8) FUNCTION nodeFactorSingle(this,idx) RESULT(nf)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     INTEGER,INTENT(IN)           :: idx
-                    aa = c_nodefactorCorrection(this%ptr,idx)
-                END FUNCTION nodefactorCorrection
+                    nf = c_nodeFactorSingle(this%ptr,idx)
+                END FUNCTION nodeFactorSingle
                 
-                REAL(8) FUNCTION astronomicArgument(this,idx) RESULT(aa)
+                REAL(8) FUNCTION nodeFactorGrid(this,grid,idx) RESULT(nf)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    nf = c_nodeFactorGrid(this%ptr,grid,idx)
+                END FUNCTION nodeFactorGrid
+                
+                REAL(8) FUNCTION equilibriumArgumentSingle(this,idx) RESULT(ea)
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     INTEGER,INTENT(IN)           :: idx
-                    aa = c_astronomicArgument(this%ptr,idx)
-                END FUNCTION astronomicArgument
+                    ea = c_equilibriumArgumentSingle(this%ptr,idx)
+                END FUNCTION equilibriumArgumentSingle
+                
+                REAL(8) FUNCTION equilibriumArgumentGrid(this,grid,idx) RESULT(ea)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    ea = c_equilibriumArgumentGrid(this%ptr,grid,idx)
+                END FUNCTION equilibriumArgumentGrid
+                
+                REAL(8) FUNCTION nodefactorCorrectionSingle(this,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_nodefactorCorrectionSingle(this%ptr,idx)
+                END FUNCTION nodefactorCorrectionSingle
+                
+                REAL(8) FUNCTION nodefactorCorrectionGrid(this,grid,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_nodefactorCorrectionGrid(this%ptr,grid,idx)
+                END FUNCTION nodefactorCorrectionGrid
+                
+                REAL(8) FUNCTION astronomicArgumentSingle(this,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_astronomicArgumentSingle(this%ptr,idx)
+                END FUNCTION astronomicArgumentSingle
+                
+                REAL(8) FUNCTION astronomicArgumentGrid(this,grid,idx) RESULT(aa)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    INTEGER,INTENT(IN)           :: grid
+                    INTEGER,INTENT(IN)           :: idx
+                    aa = c_astronomicArgumentGrid(this%ptr,grid,idx)
+                END FUNCTION astronomicArgumentGrid
 
                 INTEGER FUNCTION addConstituent(this,harmonicName) RESULT(ierr)
                     USE,INTRINSIC                :: ISO_C_BINDING,ONLY:C_PTR,C_NULL_CHAR
@@ -252,6 +411,29 @@
                     CALL c_calculateWithTwoDates(this%ptr,year1,month1,day1,hour1,minute1,second1,&
                                                           year2,month2,day2,hour2,minute2,second2,latitude)
                 END FUNCTION calculateWithTwoDates
+
+                INTEGER FUNCTION calculateGrid(this,dt) RESULT(ierr)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    REAL(8),INTENT(IN)           :: dt
+                    CALL c_calculateGrid(this%ptr,dt)
+                END FUNCTION calculateGrid
+
+                INTEGER FUNCTION generateLatitudeGrid(this,latmin,latmax,resolution) RESULT(ierr)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    REAL(8),INTENT(IN)           :: latmin,latmax,resolution
+                    ierr = c_generateLatitudeGrid(this%ptr,latmin,latmax,resolution)
+                END FUNCTION generateLatitudeGrid
+
+                INTEGER FUNCTION getInterpolationFactors(this,latitude,gridIndex,weight) RESULT(ierr)
+                    IMPLICIT NONE
+                    CLASS(TIDEFAC),INTENT(INOUT) :: this
+                    REAL(8),INTENT(IN)           :: latitude
+                    INTEGER,INTENT(OUT)          :: gridIndex
+                    REAL(8),INTENT(OUT)          :: weight
+                    ierr = c_getInterpolationFactors(this%ptr,latitude,gridIndex,weight)
+                END FUNCTION getInterpolationFactors
 
                 SUBROUTINE purgeTidefac() 
                     IMPLICIT NONE

@@ -1946,6 +1946,10 @@ static std::array<const std::string, 146> s_names = {
     "ST27", "ST28", "M10",  "ST29", "ST30", "ST31", "ST32", "ST33", "M12",
     "ST34", "ST35"};
 
+constexpr std::array<int, 37> s_iconst_unique = {
+    8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28,
+    29, 34, 35, 39, 40, 42, 43, 46, 47, 48, 49, 53, 54, 57, 58, 59, 61, 69};
+
 size_t Constituent::constituentIndex(const std::string &name) {
   auto idx = std::find(s_names.begin(), s_names.end(), name);
   if (idx != s_names.end()) {
@@ -1983,9 +1987,6 @@ const std::array<const Constituent::TC *, 146> *Constituent::constituents() {
   return &s_alltides;
 }
 
-std::vector<int> Constituent::iconst_unique() {
-  std::vector<int> u(s_iconst.begin(), s_iconst.end());
-  auto it = std::unique(u.begin(), u.end());
-  u.erase(it, u.end());
-  return u;
+const std::array<int, 37> *Constituent::iconst_unique() {
+  return &s_iconst_unique;
 }
