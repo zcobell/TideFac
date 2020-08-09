@@ -86,7 +86,7 @@ int TideFac::generateLatitudeGrid(const double latmin, const double latmax,
  * @return error if not 0
  */
 int TideFac::getInterpolationFactors(const double &latitude,
-                                     unsigned long &gridIndex, double &weight) {
+                                     unsigned long &gridIndex, double &weight) const {
   if (latitude < 0.0) {
     auto p = std::upper_bound(this->m_latgrid.begin(), this->m_latgrid.end(),
                               latitude);
@@ -685,7 +685,7 @@ void TideFac::reorientAngularParameters(double &nc, double &eq, double &aa) {
  * @param gridIndex grid index
  * @return name of tide
  */
-std::string TideFac::name(size_t index, size_t gridIndex) {
+std::string TideFac::name(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].name;
@@ -697,50 +697,54 @@ std::string TideFac::name(size_t index, size_t gridIndex) {
  * @param gridIndex grid index
  * @return amplitude of tide
  */
-double TideFac::amplitude(size_t index, size_t gridIndex) {
+double TideFac::amplitude(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].amp;
 }
 
 /**
- * @brief Returns the frequency of the tide at the specified position in the grid
+ * @brief Returns the frequency of the tide at the specified position in the
+ * grid
  * @param index tide index
  * @param gridIndex grid index
  * @return frequency of tide
  */
-double TideFac::frequency(size_t index, size_t gridIndex) {
+double TideFac::frequency(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].freq;
 }
 
 /**
- * @brief Returns the earth tide reduction factor at the specified position in the grid
+ * @brief Returns the earth tide reduction factor at the specified position in
+ * the grid
  * @param index tide index
  * @param gridIndex grid index
  * @return earth tide reduction factor for the tide
  */
-double TideFac::earthTideReductionFactor(size_t index, size_t gridIndex) {
+double TideFac::earthTideReductionFactor(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].etrf;
 }
 
 /**
- * @brief Returns the node factor of the tide at the specified position in the grid
+ * @brief Returns the node factor of the tide at the specified position in the
+ * grid
  * @param index tide index
  * @param gridIndex grid index
  * @return node factor of tide
  */
-double TideFac::nodeFactor(size_t index, size_t gridIndex) {
+double TideFac::nodeFactor(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].nodefactor;
 }
 
 /**
- * @brief Returns the equilibrium argument of the tide at the specified position in the grid
+ * @brief Returns the equilibrium argument of the tide at the specified position
+ * in the grid
  * @param index tide index
  * @param gridIndex grid index
  * @return equilibrium argument of tide
@@ -752,24 +756,26 @@ double TideFac::equilibriumArgument(size_t index, size_t gridIndex) {
 }
 
 /**
- * @brief Returns the node factor correction of the tide at the specified position in the grid
+ * @brief Returns the node factor correction of the tide at the specified
+ * position in the grid
  * @param index tide index
  * @param gridIndex grid index
  * @return node factor correction for the tide
  */
-double TideFac::nodefactorCorrection(size_t index, size_t gridIndex) {
+double TideFac::nodefactorCorrection(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].nodecorrection;
 }
 
 /**
- * @brief Returns the astronomic argument of the tide at the specified position in the grid
+ * @brief Returns the astronomic argument of the tide at the specified position
+ * in the grid
  * @param index tide index
  * @param gridIndex grid index
  * @return astronomic argument of tide
  */
-double TideFac::astronomicArgument(size_t index, size_t gridIndex) {
+double TideFac::astronomicArgument(size_t index, size_t gridIndex) const {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].astroarg;

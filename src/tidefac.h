@@ -31,11 +31,11 @@
  * @class TideFac
  * @author Zachary Cobell
  * @brief Class to handle the calculation of tide parameters on the earth
- * @copyright Copyright 2015-2019 Zachary Cobell. All Rights Reserved. This project
- * is released under the terms of the GNU General Public License v3
+ * @copyright Copyright 2015-2019 Zachary Cobell. All Rights Reserved. This
+ * project is released under the terms of the GNU General Public License v3
  *
- * The TideFac class is designed to compute the tide factors for use in numerical
- * modeling. The methodology is developed from UTide (Codiga, 2011)
+ * The TideFac class is designed to compute the tide factors for use in
+ * numerical modeling. The methodology is developed from UTide (Codiga, 2011)
  *
  */
 class TideFac {
@@ -69,20 +69,21 @@ class TideFac {
 
   Date TIDEFAC_EXPORT curTime() const;
 
-  std::string TIDEFAC_EXPORT name(size_t index, size_t gridIndex = 0);
-  double TIDEFAC_EXPORT amplitude(size_t index, size_t gridIndex = 0);
-  double TIDEFAC_EXPORT frequency(size_t index, size_t gridIndex = 0);
+  std::string TIDEFAC_EXPORT name(size_t index, size_t gridIndex = 0) const;
+  double TIDEFAC_EXPORT amplitude(size_t index, size_t gridIndex = 0) const;
+  double TIDEFAC_EXPORT frequency(size_t index, size_t gridIndex = 0) const;
   double TIDEFAC_EXPORT earthTideReductionFactor(size_t index,
-                                                 size_t gridIndex = 0);
-  double TIDEFAC_EXPORT nodeFactor(size_t index, size_t gridIndex = 0);
+                                                 size_t gridIndex = 0) const;
+  double TIDEFAC_EXPORT nodeFactor(size_t index, size_t gridIndex = 0) const;
   double TIDEFAC_EXPORT equilibriumArgument(size_t index, size_t gridIndex = 0);
   double TIDEFAC_EXPORT nodefactorCorrection(size_t index,
-                                             size_t gridIndex = 0);
-  double TIDEFAC_EXPORT astronomicArgument(size_t index, size_t gridIndex = 0);
+                                             size_t gridIndex = 0) const;
+  double TIDEFAC_EXPORT astronomicArgument(size_t index,
+                                           size_t gridIndex = 0) const;
 
   int TIDEFAC_EXPORT getInterpolationFactors(const double &latitude,
                                              unsigned long &gridIndex,
-                                             double &weight);
+                                             double &weight) const;
 
  private:
   struct Tide {
