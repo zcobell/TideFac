@@ -106,6 +106,11 @@
 
             CALL purgeTidefac()
 
+            tide = TideFac()
+            call tide%delete()
+
+            WRITE(*,'(A)') "All Fortran tests passed."
+
         END PROGRAM TIDEFAC_FORTRAN
 
 
