@@ -27,6 +27,17 @@
 #include "date.h"
 #include "tidefac_global.h"
 
+/**
+ * @class TideFac
+ * @author Zachary Cobell
+ * @brief Class to handle the calculation of tide parameters on the earth
+ * @copyright Copyright 2015-2019 Zachary Cobell. All Rights Reserved. This project
+ * is released under the terms of the GNU General Public License v3
+ *
+ * The TideFac class is designed to compute the tide factors for use in numerical
+ * modeling. The methodology is developed from UTide (Codiga, 2011)
+ *
+ */
 class TideFac {
  public:
   TIDEFAC_EXPORT TideFac();

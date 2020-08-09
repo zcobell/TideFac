@@ -27,12 +27,28 @@
 
 #include "constituent.h"
 
+/**
+ * @brief Default constructor
+ *
+ * Initializes to epoch time with a single tide calculation location
+ *
+ */
 TideFac::TideFac()
     : m_refTime(0), m_curTime(0), m_resolution(0.0), m_tides(1) {}
 
+/**
+ * @brief Constructor that initializes with a reference time
+ * @param refTime initializes the reference time
+ */
 TideFac::TideFac(const Date &refTime)
     : m_refTime(refTime), m_curTime(0), m_resolution(0.0), m_tides(1) {}
 
+/**
+ * @brief Constructor to initialize with a tide grid
+ * @param latmin minimum latitude for grid
+ * @param latmax maximum latitude for grid
+ * @param resolution tide grid resolution
+ */
 TideFac::TideFac(const double latmin, const double latmax,
                  const double resolution)
     : m_refTime(0),
@@ -41,6 +57,13 @@ TideFac::TideFac(const double latmin, const double latmax,
       m_latgrid(generateGrid(latmin, latmax, resolution)),
       m_tides(m_latgrid.size()) {}
 
+/**
+ * @brief Generates the tide grid with specified coordinates
+ * @param latmin minimum latitude for grid
+ * @param latmax maximum latitude for grid
+ * @param resolution tide grid resolution
+ * @return error if not 0
+ */
 int TideFac::generateLatitudeGrid(const double latmin, const double latmax,
                                   const double resolution) {
   assert(resolution > 0.0);
@@ -54,10 +77,14 @@ int TideFac::generateLatitudeGrid(const double latmin, const double latmax,
   return 0;
 }
 
-int TideFac::addConstituent(const char *harmonic) {
-  return this->addConstituent(std::string(harmonic));
-}
-
+/**
+ * @brief Generates the interpolation factors for a given location on the tide
+ * grid
+ * @param latitude query location
+ * @param gridIndex returned lower grid index
+ * @param weight weight of the lower grid index
+ * @return error if not 0
+ */
 int TideFac::getInterpolationFactors(const double &latitude,
                                      unsigned long &gridIndex, double &weight) {
   if (latitude < 0.0) {
@@ -75,6 +102,11 @@ int TideFac::getInterpolationFactors(const double &latitude,
   return 0;
 }
 
+/**
+ * @brief Converts the input string to uppercase
+ * @param s string to convert
+ * @return uppercase string
+ */
 std::string TideFac::toUpper(const std::string &s) {
   std::locale loc;
   std::string sout;
@@ -85,6 +117,21 @@ std::string TideFac::toUpper(const std::string &s) {
   return sout;
 }
 
+/**
+ * @brief Add a constituent to the calculation
+ * @param harmonic character name of the harmonic
+ * @return error if not 0
+ */
+int TideFac::addConstituent(const char *harmonic) {
+  return this->addConstituent(std::string(harmonic));
+}
+
+/**
+ * @overload
+ * @brief Add a constituent to the calculation
+ * @param harmonic
+ * @return
+ */
 int TideFac::addConstituent(const std::string &harmonic) {
   const std::string harm = TideFac::toUpper(harmonic);
   size_t idx = Constituent::constituentIndex(harm);
@@ -102,22 +149,39 @@ int TideFac::addConstituent(const std::string &harmonic) {
   }
 }
 
+/**
+ * @brief Shortcut to add the major 8 tide constituents
+ * @return error if not 0
+ */
 int TideFac::addMajor8() {
-  this->addConstituent("M2");
-  this->addConstituent("S2");
-  this->addConstituent("N2");
-  this->addConstituent("K2");
-  this->addConstituent("K1");
-  this->addConstituent("O1");
-  this->addConstituent("Q1");
-  this->addConstituent("P1");
-  return 0;
+  int ierr = this->addConstituent("M2");
+  ierr += this->addConstituent("S2");
+  ierr += this->addConstituent("N2");
+  ierr += this->addConstituent("K2");
+  ierr += this->addConstituent("K1");
+  ierr += this->addConstituent("O1");
+  ierr += this->addConstituent("Q1");
+  ierr += this->addConstituent("P1");
+  return ierr;
 }
 
+/**
+ * @brief Computes the tides for the given time
+ * @param dt time (seconds) since reference time for the calculation
+ * @param latitude location for the calculation
+ */
 void TideFac::calculate(const size_t dt, const double latitude) {
   this->calculate(this->m_refTime + dt, latitude);
 }
 
+/**
+ * @brief Computes the tides for the given time
+ * @overload
+ * @param dt time (seconds0 since the reference time
+ * @param latitude location for the calculation
+ *
+ * Note that resolution more fine than one second is not supported
+ */
 void TideFac::calculate(const double dt, const double latitude) {
   this->calculate(static_cast<size_t>(std::floor(dt)), latitude);
 }
@@ -137,16 +201,13 @@ std::tuple<double, double, double> TideFac::getStaticParameters(
               ->earthreduc};
 }
 
-void zeroTo360(double &v) {
-  if (v < 0.0) v += 360.0;
-}
-
-void TideFac::reorientAngularParameters(double &nc, double &eq, double &aa) {
-  zeroTo360(nc);
-  zeroTo360(eq);
-  zeroTo360(aa);
-}
-
+/**
+ * @brief Calculation function which uses two dates and returns a set of mean
+ * values to use
+ * @param d1 start date for simulation
+ * @param d2 end date for simulation
+ * @param latitude location for the calculation
+ */
 void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
   if (this->m_constituentIndex.size() == 0) {
     std::cerr << "[ERROR]: No tide selected. Aborting calculation" << std::endl;
@@ -199,6 +260,12 @@ void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
   this->m_curTime = d1 + d2.toSeconds() / 2;
 }
 
+/**
+ * @overload
+ * @brief Computes the values for the given time at all locations on the
+ * latitude grid
+ * @param d date for the calculation
+ */
 void TideFac::calculate(const Date &d) {
   if (this->m_constituentIndex.size() == 0) {
     std::cerr << "[ERROR]: No tide selected. Aborting calculation" << std::endl;
@@ -228,14 +295,32 @@ void TideFac::calculate(const Date &d) {
   }
 }
 
+/**
+ * @overload
+ * @brief Computes all points on the tide grid for a specified time since the
+ * reference time
+ * @param dt time (seconds) since the reference
+ */
 void TideFac::calculate(const size_t dt) {
   return this->calculate(this->m_refTime + dt);
 }
 
+/**
+ * @overload
+ * @brief Computes all points on the tide grid for a specified time since the
+ * reference time
+ * @param dt time (seconds) since the reference
+ */
 void TideFac::calculate(const double dt) {
   this->calculate(static_cast<size_t>(std::floor(dt)));
 }
 
+/**
+ * @overload
+ * @brief Computes the tide parameters for a given date
+ * @param d date for the calculation
+ * @param latitude location for the calculation
+ */
 void TideFac::calculate(const Date &d, const double latitude) {
   if (this->m_constituentIndex.size() == 0) {
     std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
@@ -257,6 +342,14 @@ void TideFac::calculate(const Date &d, const double latitude) {
   }
 }
 
+/**
+ * @brief Generates the tide calculation for the given F,U,V
+ * @param index tide index
+ * @param F tide factor vector
+ * @param U tide factor vector
+ * @param V tide factor vector
+ * @return Tide object for the specified index
+ */
 TideFac::Tide TideFac::generateTide(const size_t index,
                                     const std::vector<double> &F,
                                     const std::vector<double> &U,
@@ -277,6 +370,12 @@ TideFac::Tide TideFac::generateTide(const size_t index,
               eq, nc, aa);
 }
 
+/**
+ * @brief Compute the astronomic arguments for the given orbital arguments
+ * @param astro orbital parameters
+ * @param latitude location for the calculation
+ * @return three vectors of tide factors in a tuple
+ */
 std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
                                       const double latitude) {
@@ -295,6 +394,12 @@ TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
   return {F, U, V};
 }
 
+/**
+ * @brief Computes the orbital parameters for the given date
+ * @param d time for the calculation
+ * @param astro astronomic arguments
+ * @param ader astronomic arguments
+ */
 void TideFac::computeOrbitalParameters(const Date &d,
                                        std::array<double, 6> *astro,
                                        std::array<double, 6> *ader) {
@@ -367,6 +472,10 @@ void TideFac::computeOrbitalParameters(const Date &d,
   return;
 }
 
+/**
+ * @brief Quickly prints the specified tide on screen
+ * @param index index for the tide object to show
+ */
 void TideFac::show(const size_t index) const {
   std::cout << "Tidal Factors for simulation time " << this->m_curTime << "\n";
   for (auto &t : this->m_tides) {
@@ -376,6 +485,13 @@ void TideFac::show(const size_t index) const {
   }
 }
 
+/**
+ * @brief Computes the matrix sum used in the calculation where constituent
+ * indicies align
+ * @param mat input matrix
+ * @param idx index of the tide
+ * @return sum
+ */
 std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
                             const int idx) {
   std::complex<double> s = {0.0, 0.0};
@@ -387,6 +503,11 @@ std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
   return s;
 }
 
+/**
+ * @brief Computes the U components
+ * @param astro astronomic arguments
+ * @return array of U for each tide
+ */
 std::array<double, 162> TideFac::computeUU(const std::array<double, 6> &astro) {
   std::array<double, 162> uu;
   for (size_t i = 0; i < uu.size(); ++i) {
@@ -399,6 +520,12 @@ std::array<double, 162> TideFac::computeUU(const std::array<double, 6> &astro) {
   return uu;
 }
 
+/**
+ * @brief Computes the matrix rr*e^(i*pi*uu)
+ * @param uu U array
+ * @param rr R array
+ * @return matrix containing values to be summed later
+ */
 std::array<std::complex<double>, 162> TideFac::computeMat(
     const std::array<double, 162> &uu, const std::array<double, 162> &rr) {
   constexpr std::complex<double> c_i(0, 1);
@@ -409,24 +536,34 @@ std::array<std::complex<double>, 162> TideFac::computeMat(
   return mat;
 }
 
+/**
+ * @brief Compute the RR array
+ * @param latitude location for calculation
+ * @return RR array
+ */
 std::array<double, 162> TideFac::computeRR(const double latitude) {
-  double lat = latitude;
-  if (std::abs(latitude) < 0.5) {
-    lat = std::copysign(0.5, latitude);
-  }
-  double slat = std::sin(TideFac::pi180() * lat);
+  auto latsign = [](double lat) {
+    return std::abs(lat) < 0.5 ? std::copysign(0.5, lat) : lat;
+  };
+
+  const double slat = std::sin(TideFac::pi180() * latsign(latitude));
+  const double slatfac1 = 0.36309 * (1.0 - 5.0 * slat * slat) / slat;
+  const double slatfac2 = slat * 2.59808;
+
   std::array<double, 162> rr = *(Constituent::amprat());
   for (size_t i = 0; i < Constituent::amprat()->size(); ++i) {
     if (Constituent::ilatfac()->at(i) == 1) {
-      rr[i] = (Constituent::amprat()->at(i) * 0.36309 *
-               (1.0 - 5.0 * slat * slat) / slat);
+      rr[i] = Constituent::amprat()->at(i) * slatfac1;
     } else if (Constituent::ilatfac()->at(i) == 2) {
-      rr[i] = rr[i] * 2.59808 * slat;
+      rr[i] = rr[i] * slatfac2;
     }
   }
   return rr;
 }
 
+/**
+ * @brief Computes the minor corrections for F,U,V vectors in place
+ */
 void TideFac::computeMinorCorrections(std::vector<std::complex<double>> &F,
                                       std::vector<double> &U,
                                       std::vector<double> &V) {
@@ -459,6 +596,9 @@ void TideFac::computeMinorCorrections(std::vector<std::complex<double>> &F,
   }
 }
 
+/**
+ * @brief Computes the primary values for F, U, V vectors
+ */
 void TideFac::computePrimaryFactors(
     std::vector<std::complex<double>> &F, std::vector<double> &U,
     std::vector<double> &V, const std::array<std::complex<double>, 162> &mat,
@@ -488,6 +628,11 @@ void TideFac::computePrimaryFactors(
   }
 }
 
+/**
+ * @brief Converts a complex double to a double
+ * @param complex vector containing complex values
+ * @return vector containing double values
+ */
 std::vector<double> TideFac::complexToReal(
     std::vector<std::complex<double>> &complex) {
   std::vector<double> dbl(complex.size());
@@ -496,8 +641,13 @@ std::vector<double> TideFac::complexToReal(
   return dbl;
 }
 
-Date TideFac::curTime() const { return this->m_curTime; }
-
+/**
+ * @brief Generates the latitude grid based on min, max, res
+ * @param min minimum value in the grid
+ * @param max maximum value in the grid
+ * @param res resolution of grid
+ * @return vector containing grid points
+ */
 std::vector<double> TideFac::generateGrid(const double min, const double max,
                                           const double res) {
   size_t n = std::floor((max - min) / res) + 2;
@@ -509,54 +659,136 @@ std::vector<double> TideFac::generateGrid(const double min, const double max,
   return l;
 }
 
+/**
+ * @brief Converts an angle to 360 degree orientation
+ * @param v value to be converted in place
+ */
+void zeroTo360(double &v) {
+  if (v < 0.0) v += 360.0;
+}
+
+/**
+ * @brief Converts the angles in the calculation to 0-360 degrees in place
+ * @param nc node correction
+ * @param eq equilibrium argument
+ * @param aa astronomic argument
+ */
+void TideFac::reorientAngularParameters(double &nc, double &eq, double &aa) {
+  zeroTo360(nc);
+  zeroTo360(eq);
+  zeroTo360(aa);
+}
+
+/**
+ * @brief Returns the tide name at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return name of tide
+ */
 std::string TideFac::name(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].name;
 }
 
+/**
+ * @brief Amplitude of tide at the specified position
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return amplitude of tide
+ */
 double TideFac::amplitude(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].amp;
 }
 
+/**
+ * @brief Returns the frequency of the tide at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return frequency of tide
+ */
 double TideFac::frequency(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].freq;
 }
 
+/**
+ * @brief Returns the earth tide reduction factor at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return earth tide reduction factor for the tide
+ */
 double TideFac::earthTideReductionFactor(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].etrf;
 }
 
+/**
+ * @brief Returns the node factor of the tide at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return node factor of tide
+ */
 double TideFac::nodeFactor(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].nodefactor;
 }
 
+/**
+ * @brief Returns the equilibrium argument of the tide at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return equilibrium argument of tide
+ */
 double TideFac::equilibriumArgument(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].eqarg;
 }
 
+/**
+ * @brief Returns the node factor correction of the tide at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return node factor correction for the tide
+ */
 double TideFac::nodefactorCorrection(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].nodecorrection;
 }
 
+/**
+ * @brief Returns the astronomic argument of the tide at the specified position in the grid
+ * @param index tide index
+ * @param gridIndex grid index
+ * @return astronomic argument of tide
+ */
 double TideFac::astronomicArgument(size_t index, size_t gridIndex) {
   assert(gridIndex < this->m_tides.size());
   assert(index < this->m_tides[gridIndex].size());
   return this->m_tides[gridIndex][index].astroarg;
 }
 
+/**
+ * @brief Reference time for the current calculation
+ * @return reference time
+ */
 Date TideFac::refTime() const { return this->m_refTime; }
 
+/**
+ * @brief Sets the reference time for the calculation
+ * @param refTime date object with reference time
+ */
 void TideFac::setRefTime(const Date &refTime) { this->m_refTime = refTime; }
+
+/**
+ * @brief Returns the current time for the calculation
+ * @return date object with current time
+ */
+Date TideFac::curTime() const { return this->m_curTime; }
