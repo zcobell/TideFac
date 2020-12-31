@@ -45,11 +45,11 @@ class Date {
                             std::ratio_divide<years::period, std::ratio<12>>>;
 
   Date();
-  Date(const std::chrono::system_clock::time_point &t);
-  Date(const std::vector<int> &v);
+  explicit Date(const std::chrono::system_clock::time_point &t);
+  explicit Date(const std::vector<int> &v);
   Date(const Date &d);
-  Date(int year, int month = 1, int day = 1, int hour = 0, int minute = 0,
-       int second = 0, int millisecond = 0);
+  explicit Date(int year, int month = 1, int day = 1, int hour = 0,
+                int minute = 0, int second = 0, int millisecond = 0);
 
 #ifndef SWIG
   //...operator overloads

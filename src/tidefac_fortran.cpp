@@ -63,7 +63,7 @@ int getInterpolationFactors(size_t object, double latitude,
 
 size_t createTidefac() {
   tid++;
-  s_tidefac[tid] = std::unique_ptr<TideFac>(new TideFac());
+  s_tidefac[tid] = std::make_unique<TideFac>();
   return tid;
 }
 

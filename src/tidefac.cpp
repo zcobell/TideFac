@@ -22,8 +22,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <locale>
-#include <numeric>
+#include <tuple>
 
 #include "constituent.h"
 
@@ -71,7 +70,7 @@ int TideFac::generateLatitudeGrid(const double latmin, const double latmax,
   assert(latmin >= -90.0);
   assert(latmax <= 90.0);
   this->m_resolution = resolution;
-  this->m_latgrid = this->generateGrid(latmin, latmax, resolution);
+  this->m_latgrid = TideFac::generateGrid(latmin, latmax, resolution);
   this->m_tides.clear();
   this->m_tides.resize(this->m_latgrid.size());
   return 0;
@@ -85,19 +84,14 @@ int TideFac::generateLatitudeGrid(const double latmin, const double latmax,
  * @param weight weight of the lower grid index
  * @return error if not 0
  */
-int TideFac::getInterpolationFactors(const double &latitude,
-                                     unsigned long &gridIndex, double &weight) const {
-  if (latitude < 0.0) {
-    auto p = std::upper_bound(this->m_latgrid.begin(), this->m_latgrid.end(),
-                              latitude);
-    if (p == this->m_latgrid.begin() || p == this->m_latgrid.end()) return 1;
-    gridIndex = p - this->m_latgrid.begin() - 1;
-  } else {
-    auto p = std::lower_bound(this->m_latgrid.begin(), this->m_latgrid.end(),
-                              latitude);
-    if (p == this->m_latgrid.begin() || p == this->m_latgrid.end()) return 1;
-    gridIndex = p - this->m_latgrid.begin() - 1;
-  }
+int TideFac::getInterpolationFactors(const double latitude,
+                                     unsigned long &gridIndex,
+                                     double &weight) const {
+  auto p = latitude < 0.0 ? std::upper_bound(this->m_latgrid.begin(),
+                                             this->m_latgrid.end(), latitude)
+                          : std::lower_bound(this->m_latgrid.begin(),
+                                             this->m_latgrid.end(), latitude);
+  gridIndex = p - this->m_latgrid.begin() - 1;
   weight = 1.0 - (latitude - this->m_latgrid[gridIndex]) / this->m_resolution;
   return 0;
 }
@@ -107,14 +101,11 @@ int TideFac::getInterpolationFactors(const double &latitude,
  * @param s string to convert
  * @return uppercase string
  */
-std::string TideFac::toUpper(const std::string &s) {
+void TideFac::toUpper(std::string &s) {
   std::locale loc;
-  std::string sout;
-  sout.reserve(s.size());
   for (auto &c : s) {
-    sout.push_back(std::toupper(c, loc));
+    c = std::toupper(c, loc);
   }
-  return sout;
 }
 
 /**
@@ -132,18 +123,18 @@ int TideFac::addConstituent(const char *harmonic) {
  * @param harmonic
  * @return
  */
-int TideFac::addConstituent(const std::string &harmonic) {
-  const std::string harm = TideFac::toUpper(harmonic);
-  size_t idx = Constituent::constituentIndex(harm);
-  if (idx == Constituent::nullvalue<size_t>()) {
+int TideFac::addConstituent(std::string harmonic) {
+  TideFac::toUpper(harmonic);
+  size_t idx = Constituent::constituentIndex(harmonic.c_str());
+  if (idx == Constituent::null_value<size_t>()) {
     return 1;
   } else {
     auto s = std::find(this->m_constituentIndex.begin(),
                        this->m_constituentIndex.end(), idx);
-    if (this->m_constituentIndex.size() == 0 ||
+    if (this->m_constituentIndex.empty() ||
         s == this->m_constituentIndex.end()) {
       this->m_constituentIndex.push_back(idx);
-      this->m_constituentNames.push_back(harm);
+      this->m_constituentNames.push_back(harmonic);
     }
     return 0;
   }
@@ -189,16 +180,16 @@ void TideFac::calculate(const double dt, const double latitude) {
 std::tuple<double, double, double> TideFac::getStaticParameters(
     const size_t index) {
   return {std::abs(Constituent::constituents()
-                       ->at(this->m_constituentIndex[index])
-                       ->doodsonamp) *
+                       .at(this->m_constituentIndex[index])
+                       .doodson_amplitude) *
               0.2675,
           Constituent::constituents()
-                  ->at(this->m_constituentIndex[index])
-                  ->frequency *
+                  .at(this->m_constituentIndex[index])
+                  .frequency *
               TideFac::twopi() / 3600.0,
           Constituent::constituents()
-              ->at(this->m_constituentIndex[index])
-              ->earthreduc};
+              .at(this->m_constituentIndex[index])
+              .earth_tide_reduction_factor};
 }
 
 /**
@@ -209,13 +200,15 @@ std::tuple<double, double, double> TideFac::getStaticParameters(
  * @param latitude location for the calculation
  */
 void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
-  if (this->m_constituentIndex.size() == 0) {
+  assert(!this->m_constituentIndex.empty());
+  if (this->m_constituentIndex.empty()) {
     std::cerr << "[ERROR]: No tide selected. Aborting calculation" << std::endl;
     return;
   }
   std::vector<Date> dateList;
-  size_t dt = std::floor((d2.toSeconds() - d1.toSeconds()) / 1000.0);
-  dateList.resize(1000);
+  size_t dt = std::floor((d2.toSeconds() - d1.toSeconds()) /
+                         TideFac::meanNumTides<size_t>());
+  dateList.resize(TideFac::meanNumTides<size_t>());
   for (size_t i = 0; i < dateList.size(); ++i) {
     dateList[i] = d1 + i * dt;
   }
@@ -224,12 +217,12 @@ void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
   std::vector<double> mean_nfCorrection(this->m_constituentIndex.size(), 0.0);
   std::vector<double> V1;
 
-  for (size_t i = 0; i < 1000; ++i) {
-    std::array<double, 6> astro;
-    this->computeOrbitalParameters(dateList[i], &astro);
+  for (size_t i = 0; i < TideFac::meanNumTides<size_t>(); ++i) {
+    std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    TideFac::computeOrbitalParameters(dateList[i], &astro);
 
     std::vector<double> F, U, V;
-    std::tie(F, U, V) = this->computeAstronomicalArguments(astro, latitude);
+    TideFac::computeAstronomicalArguments(astro, latitude, F, U, V);
 
     if (i == 0) V1 = V;  // astro arg at start used
 
@@ -242,13 +235,14 @@ void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
   this->m_tides[0].clear();
   this->m_tides.reserve(this->m_constituentIndex.size());
   for (size_t i = 0; i < this->m_constituentIndex.size(); ++i) {
-    double nf = mean_nodeFactor[i] / 1000.0;
-    double nc = (mean_nfCorrection[i] / 1000.0) * 360.0;
-    double eq =
-        (mean_nfCorrection[i] / 1000.0 + V1[this->m_constituentIndex[i]]) *
-        360.0;
+    double nf = mean_nodeFactor[i] / TideFac::meanNumTides<double>();
+    double nc =
+        (mean_nfCorrection[i] / TideFac::meanNumTides<double>()) * 360.0;
+    double eq = (mean_nfCorrection[i] / TideFac::meanNumTides<double>() +
+                 V1[this->m_constituentIndex[i]]) *
+                360.0;
     double aa = V1[this->m_constituentIndex[i]] * 360.0;
-    this->reorientAngularParameters(nc, eq, aa);
+    TideFac::reorientAngularParameters(nc, eq, aa);
 
     double amp, frequency, etrf;
     std::tie(amp, frequency, etrf) = getStaticParameters(i);
@@ -267,10 +261,13 @@ void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
  * @param d date for the calculation
  */
 void TideFac::calculate(const Date &d) {
-  if (this->m_constituentIndex.size() == 0) {
+  assert(!this->m_constituentIndex.empty());
+  if (this->m_constituentIndex.empty()) {
     std::cerr << "[ERROR]: No tide selected. Aborting calculation" << std::endl;
     return;
   }
+
+  assert(this->m_tides.size() > 1);
   if (this->m_tides.size() <= 1) {
     std::cerr << "[ERROR] Calculation not configured for tide grid."
               << std::endl;
@@ -279,13 +276,12 @@ void TideFac::calculate(const Date &d) {
 
   this->m_curTime = d;
 
-  std::array<double, 6> astro;
-  this->computeOrbitalParameters(d, &astro);
+  std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  TideFac::computeOrbitalParameters(d, &astro);
 
   for (size_t i = 0; i < this->m_tides.size(); ++i) {
     std::vector<double> F, U, V;
-    std::tie(F, U, V) =
-        this->computeAstronomicalArguments(astro, this->m_latgrid[i]);
+    TideFac::computeAstronomicalArguments(astro, this->m_latgrid[i], F, U, V);
 
     this->m_tides[i].clear();
     this->m_tides[i].reserve(this->m_constituentIndex.size());
@@ -322,16 +318,17 @@ void TideFac::calculate(const double dt) {
  * @param latitude location for the calculation
  */
 void TideFac::calculate(const Date &d, const double latitude) {
-  if (this->m_constituentIndex.size() == 0) {
+  assert(!this->m_constituentIndex.empty());
+  if (this->m_constituentIndex.empty()) {
     std::cerr << "[INFO]: No tide selected. Aborting calculation" << std::endl;
     return;
   }
 
-  std::array<double, 6> astro;
-  this->computeOrbitalParameters(d, &astro);
+  std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  TideFac::computeOrbitalParameters(d, &astro);
 
   std::vector<double> F, U, V;
-  std::tie(F, U, V) = this->computeAstronomicalArguments(astro, latitude);
+  TideFac::computeAstronomicalArguments(astro, latitude, F, U, V);
 
   this->m_curTime = d;
 
@@ -361,7 +358,7 @@ TideFac::Tide TideFac::generateTide(const size_t index,
               360.0;
   double aa = V[this->m_constituentIndex[index]] * 360.0;
 
-  this->reorientAngularParameters(nc, eq, aa);
+  TideFac::reorientAngularParameters(nc, eq, aa);
 
   double amp, frequency, etrf;
   std::tie(amp, frequency, etrf) = this->getStaticParameters(index);
@@ -376,22 +373,24 @@ TideFac::Tide TideFac::generateTide(const size_t index,
  * @param latitude location for the calculation
  * @return three vectors of tide factors in a tuple
  */
-std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
-TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
-                                      const double latitude) {
-  std::array<double, 162> rr = this->computeRR(latitude);
-  std::array<double, 162> uu = this->computeUU(astro);
-  std::array<std::complex<double>, 162> mat = this->computeMat(uu, rr);
+void TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
+                                           const double latitude,
+                                           std::vector<double> &F,
+                                           std::vector<double> &U,
+                                           std::vector<double> &V) {
+  std::array<double, 162> rr = TideFac::computeRR(latitude);
+  std::array<double, 162> uu = TideFac::computeUU(astro);
+  std::array<std::complex<double>, 162> mat = TideFac::computeMat(uu, rr);
 
   std::vector<std::complex<double>> Fcomplex(
-      Constituent::constituents()->size());
-  std::vector<double> U(Constituent::constituents()->size());
-  std::vector<double> V(Constituent::constituents()->size());
-  this->computePrimaryFactors(Fcomplex, U, V, mat, astro);
-  this->computeMinorCorrections(Fcomplex, U, V);
-  std::vector<double> F = TideFac::complexToReal(Fcomplex);
+      Constituent::constituents().size());
+  F.resize(Constituent::constituents().size());
+  U.resize(Constituent::constituents().size());
+  V.resize(Constituent::constituents().size());
 
-  return {F, U, V};
+  TideFac::computePrimaryFactors(Fcomplex, U, V, mat, astro);
+  TideFac::computeMinorCorrections(Fcomplex, U, V);
+  F = TideFac::complexToReal(Fcomplex);
 }
 
 /**
@@ -415,11 +414,10 @@ void TideFac::computeOrbitalParameters(const Date &d,
   constexpr std::array<double, 4> ppc{281.220844, 0.0000470684, 0.0000339,
                                       0.000000070};
 
-  Date jd(d);
-  jd.addSeconds(-epoch.toSeconds());
-  const double dd = jd.toSeconds() / 86400.0;
+  const Date jd(d - epoch.toSeconds());
+  const double dd = static_cast<double>(jd.toSeconds()) / 86400.0;
   const double nd = dd / 10000.0;
-  std::array<double, 4> args{1.0, dd, nd * nd, nd * nd * nd};
+  const std::array<double, 4> args{1.0, dd, nd * nd, nd * nd * nd};
 
   astro->at(1) = std::fmod(
       (sc[0] * args[0] + sc[1] * args[1] + sc[2] * args[2] + sc[3] * args[3]) /
@@ -441,35 +439,33 @@ void TideFac::computeOrbitalParameters(const Date &d,
                             ppc[2] * args[2] + ppc[3] * args[3]) /
                                360.0,
                            1.0);
-  astro->at(0) =
-      std::fmod(d.toSeconds() / 86400.0, 1.0) + astro->at(2) - astro->at(1);
+  astro->at(0) = std::fmod(static_cast<double>(d.toSeconds()) / 86400.0, 1.0) +
+                 astro->at(2) - astro->at(1);
 
   if (ader == nullptr) return;
 
-  args = {0.0, 1.0, 2.0e-4 * nd, 3.0e-4 * nd * nd};
-  ader->at(1) = std::fmod(
-      (sc[0] * args[0] + sc[1] * args[1] + sc[2] * args[2] + sc[3] * args[3]) /
-          360.0,
-      1.0);
-  ader->at(2) = std::fmod(
-      (hc[0] * args[0] + hc[1] * args[1] + hc[2] * args[2] + hc[3] * args[3]) /
-          360.0,
-      1.0);
-  ader->at(3) = std::fmod(
-      (pc[0] * args[0] + pc[1] * args[1] + pc[2] * args[2] + pc[3] * args[3]) /
-          360.0,
-      1.0);
-  ader->at(4) = std::fmod((npc[0] * args[0] + npc[1] * args[1] +
-                           npc[2] * args[2] + npc[3] * args[3]) /
+  const std::array<double, 4> args2 = {0.0, 1.0, 2.0e-4 * nd, 3.0e-4 * nd * nd};
+  ader->at(1) = std::fmod((sc[0] * args[0] + sc[1] * args2[1] +
+                           sc[2] * args2[2] + sc[3] * args2[3]) /
                               360.0,
                           1.0);
-  ader->at(5) = std::fmod((ppc[0] * args[0] + ppc[1] * args[1] +
-                           ppc[2] * args[2] + ppc[3] * args[3]) /
+  ader->at(2) = std::fmod((hc[0] * args2[0] + hc[1] * args2[1] +
+                           hc[2] * args2[2] + hc[3] * args2[3]) /
+                              360.0,
+                          1.0);
+  ader->at(3) = std::fmod((pc[0] * args2[0] + pc[1] * args2[1] +
+                           pc[2] * args2[2] + pc[3] * args2[3]) /
+                              360.0,
+                          1.0);
+  ader->at(4) = std::fmod((npc[0] * args2[0] + npc[1] * args2[1] +
+                           npc[2] * args2[2] + npc[3] * args2[3]) /
+                              360.0,
+                          1.0);
+  ader->at(5) = std::fmod((ppc[0] * args2[0] + ppc[1] * args2[1] +
+                           ppc[2] * args2[2] + ppc[3] * args2[3]) /
                               360.0,
                           1.0);
   ader->at(0) = 1.0 + ader->at(2) - ader->at(1);
-
-  return;
 }
 
 /**
@@ -496,7 +492,7 @@ std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
                             const int idx) {
   std::complex<double> s = {0.0, 0.0};
   for (size_t i = 0; i < mat.size(); ++i) {
-    if (Constituent::iconst()->at(i) == idx) {
+    if (Constituent::iconst().at(i) == idx) {
       s += mat[i];
     }
   }
@@ -509,12 +505,14 @@ std::complex<double> matsum(const std::array<std::complex<double>, 162> &mat,
  * @return array of U for each tide
  */
 std::array<double, 162> TideFac::computeUU(const std::array<double, 6> &astro) {
-  std::array<double, 162> uu;
+  std::array<double, 162> uu{};
+  uu.fill(0.0);
+
   for (size_t i = 0; i < uu.size(); ++i) {
-    uu[i] = std::fmod((Constituent::deldood()->at(i)[0] * astro[3] +
-                       Constituent::deldood()->at(i)[1] * astro[4] +
-                       Constituent::deldood()->at(i)[2] * astro[5]) +
-                          Constituent::phcorr()->at(i),
+    uu[i] = std::fmod((Constituent::deldood().at(i)[0] * astro[3] +
+                       Constituent::deldood().at(i)[1] * astro[4] +
+                       Constituent::deldood().at(i)[2] * astro[5]) +
+                          Constituent::phcorr().at(i),
                       1.0);
   }
   return uu;
@@ -546,15 +544,15 @@ std::array<double, 162> TideFac::computeRR(const double latitude) {
     return std::abs(lat) < 0.5 ? std::copysign(0.5, lat) : lat;
   };
 
-  const double slat = std::sin(TideFac::pi180() * latsign(latitude));
+  const double slat = std::sin(TideFac::deg2rad() * latsign(latitude));
   const double slatfac1 = 0.36309 * (1.0 - 5.0 * slat * slat) / slat;
   const double slatfac2 = slat * 2.59808;
 
-  std::array<double, 162> rr = *(Constituent::amprat());
-  for (size_t i = 0; i < Constituent::amprat()->size(); ++i) {
-    if (Constituent::ilatfac()->at(i) == 1) {
-      rr[i] = Constituent::amprat()->at(i) * slatfac1;
-    } else if (Constituent::ilatfac()->at(i) == 2) {
+  std::array<double, 162> rr = Constituent::amprat();
+  for (size_t i = 0; i < Constituent::amprat().size(); ++i) {
+    if (Constituent::ilatfac().at(i) == 1) {
+      rr[i] = Constituent::amprat().at(i) * slatfac1;
+    } else if (Constituent::ilatfac().at(i) == 2) {
       rr[i] = rr[i] * slatfac2;
     }
   }
@@ -567,17 +565,17 @@ std::array<double, 162> TideFac::computeRR(const double latitude) {
 void TideFac::computeMinorCorrections(std::vector<std::complex<double>> &F,
                                       std::vector<double> &U,
                                       std::vector<double> &V) {
-  for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
-    if (Constituent::constituents()->at(i)->ishallow !=
-        Constituent::nullvalue<int>()) {
-      int j = Constituent::constituents()->at(i)->nshallow;
-      int k = Constituent::constituents()->at(i)->ishallow;
+  for (size_t i = 0; i < Constituent::constituents().size(); ++i) {
+    if (Constituent::constituents().at(i).i_shallow !=
+        Constituent::null_value<int>()) {
+      size_t j = Constituent::constituents().at(i).n_shallow;
+      size_t k = Constituent::constituents().at(i).i_shallow;
       std::vector<int> ik(j), iloc(j);
       std::vector<double> exp1(j), exp2(j);
       for (size_t p = 0; p < ik.size(); ++p) {
         ik[p] = k + p;
-        iloc[p] = Constituent::shallow_iname()->at(ik[p] - 1);
-        exp1[p] = Constituent::shallow_coef()->at(ik[p] - 1);
+        iloc[p] = Constituent::shallow_iname().at(ik[p] - 1);
+        exp1[p] = Constituent::shallow_coef().at(ik[p] - 1);
         exp2[p] = std::abs(exp1[p]);
       }
 
@@ -604,26 +602,26 @@ void TideFac::computePrimaryFactors(
     std::vector<double> &V, const std::array<std::complex<double>, 162> &mat,
     const std::array<double, 6> &astro) {
   auto ind = Constituent::iconst_unique();
-  for (size_t i = 0; i < ind->size(); ++i) {
-    F[ind->at(i) - 1] = 1.0 + matsum(mat, ind->at(i));
+  for (int i : ind) {
+    F[i - 1] = 1.0 + matsum(mat, i);
   }
 
-  for (size_t i = 0; i < Constituent::constituents()->size(); ++i) {
+  for (size_t i = 0; i < Constituent::constituents().size(); ++i) {
     U[i] = std::log(F[i]).imag() / TideFac::twopi();
     F[i] = std::abs(F[i]);
-    if (Constituent::constituents()->at(i)->doodson[0] !=
-        Constituent::nullvalue<double>()) {
+    if (Constituent::constituents().at(i).doodson[0] !=
+        Constituent::null_value<double>()) {
       V[i] = std::fmod(
-          Constituent::constituents()->at(i)->doodson[0] * astro[0] +
-              Constituent::constituents()->at(i)->doodson[1] * astro[1] +
-              Constituent::constituents()->at(i)->doodson[2] * astro[2] +
-              Constituent::constituents()->at(i)->doodson[3] * astro[3] +
-              Constituent::constituents()->at(i)->doodson[4] * astro[4] +
-              Constituent::constituents()->at(i)->doodson[5] * astro[5] +
-              Constituent::constituents()->at(i)->semi,
+          Constituent::constituents().at(i).doodson[0] * astro[0] +
+              Constituent::constituents().at(i).doodson[1] * astro[1] +
+              Constituent::constituents().at(i).doodson[2] * astro[2] +
+              Constituent::constituents().at(i).doodson[3] * astro[3] +
+              Constituent::constituents().at(i).doodson[4] * astro[4] +
+              Constituent::constituents().at(i).doodson[5] * astro[5] +
+              Constituent::constituents().at(i).semi,
           1.0);
     } else {
-      V[i] = Constituent::nullvalue<double>();
+      V[i] = Constituent::null_value<double>();
     }
   }
 }
@@ -663,7 +661,7 @@ std::vector<double> TideFac::generateGrid(const double min, const double max,
  * @brief Converts an angle to 360 degree orientation
  * @param v value to be converted in place
  */
-void zeroTo360(double &v) {
+inline void zeroTo360(double &v) {
   if (v < 0.0) v += 360.0;
 }
 

@@ -18,9 +18,10 @@
 //------------------------------------------------------------------------*/
 #include "date.h"
 
-#include <cassert>
 #include <chrono>
 #include <iostream>
+
+#define ONLY_C_LOCALE 1
 
 #include "date_hh.h"
 
@@ -31,9 +32,9 @@ struct s_date {
  public:
   explicit s_date(const std::chrono::system_clock::time_point &t)
       : dd(date::year_month_day(date::floor<date::days>(t))) {}
-  int year() const { return int(dd.year()); }
-  unsigned month() const { return unsigned(dd.month()); }
-  unsigned day() const { return unsigned(dd.day()); }
+  [[nodiscard]] int year() const { return int(dd.year()); }
+  [[nodiscard]] unsigned month() const { return unsigned(dd.month()); }
+  [[nodiscard]] unsigned day() const { return unsigned(dd.day()); }
 };
 
 struct s_datetime {
@@ -48,13 +49,13 @@ struct s_datetime {
         dd(date::year_month_day(date::floor<date::days>(t))),
         tt(date::make_time(t - date::sys_days(dd))) {}
   date::year_month_day ymd() { return dd; }
-  int year() const { return int(dd.year()); }
-  unsigned month() const { return unsigned(dd.month()); }
-  unsigned day() const { return unsigned(dd.day()); }
-  int hour() const { return tt.hours().count(); }
-  int minute() const { return tt.minutes().count(); }
-  int second() const { return tt.seconds().count(); }
-  int milliseconds() const {
+  [[nodiscard]] int year() const { return int(dd.year()); }
+  [[nodiscard]] unsigned month() const { return unsigned(dd.month()); }
+  [[nodiscard]] unsigned day() const { return unsigned(dd.day()); }
+  [[nodiscard]] int hour() const { return tt.hours().count(); }
+  [[nodiscard]] int minute() const { return tt.minutes().count(); }
+  [[nodiscard]] int second() const { return tt.seconds().count(); }
+  [[nodiscard]] int milliseconds() const {
     Date c(year(), month(), day(), hour(), minute(), second());
     return std::chrono::duration_cast<std::chrono::milliseconds>(t -
                                                                  c.time_point())

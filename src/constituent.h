@@ -19,41 +19,48 @@
 #ifndef CONSTITUENT_H
 #define CONSTITUENT_H
 
+#include <algorithm>
 #include <array>
-#include <string>
+#include <cstdlib>
+#include <cstring>
 #include <limits>
-#include <vector>
 
-class Constituent {
- public:
-  struct TC {
-    const char *name;
-    const double frequency;
-    const std::array<double, 6> doodson;
-    const double semi;
-    const double isat;
-    const int ishallow;
-    const int nshallow;
-    const double doodsonamp;
-    const double earthreduc;
-  };
+#include "constituent_data.h"
 
-  template <typename T>
-  static constexpr T nullvalue() {
-    return -std::numeric_limits<T>::max();
+namespace Constituent {
+
+constexpr size_t constituentIndex(const char *name) {
+  for (size_t i = 0; i < s_names.size(); ++i) {
+    if (std::strcmp(s_names[i], name) == 0) {
+      return i;
+    }
   }
+  return Constituent::null_value<size_t>();
+}
 
-  static size_t constituentIndex(const std::string &name);
-  static const std::array<std::array<int, 3>, 162> *deldood();
-  static const std::array<double, 162> *phcorr();
-  static const std::array<double, 162> *amprat();
-  static const std::array<int, 162> *ilatfac();
-  static const std::array<int, 162> *iconst();
-  static const std::array<int, 37> *iconst_unique();
-  static const std::array<const TC *, 146> *constituents();
-  static const std::array<int, 251> *shallow_iconst();
-  static const std::array<double, 251> *shallow_coef();
-  static const std::array<int, 251> *shallow_iname();
-};
+constexpr std::array<std::array<char, 3>, 162> deldood() { return s_deldood; }
+
+constexpr std::array<double, 162> phcorr() { return s_phcorr; }
+
+constexpr std::array<double, 162> amprat() { return s_amprat; }
+
+constexpr std::array<unsigned char, 162> ilatfac() { return s_ilatfac; }
+
+constexpr std::array<unsigned char, 162> iconst() { return s_iconst; }
+
+constexpr std::array<unsigned char, 251> shallow_iconst() {
+  return s_shallow_iconst;
+}
+
+constexpr std::array<double, 251> shallow_coef() { return s_shallow_coef; }
+
+constexpr std::array<unsigned char, 251> shallow_iname() {
+  return s_shallow_iname;
+}
+
+constexpr std::array<Constituent::TC, 146> constituents() { return s_alltides; }
+
+constexpr std::array<short, 37> iconst_unique() { return s_iconst_unique; }
+};  // namespace Constituent
 
 #endif  // CONSTITUENT_H
