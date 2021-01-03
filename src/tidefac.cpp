@@ -648,10 +648,10 @@ std::vector<double> TideFac::complexToReal(
  */
 std::vector<double> TideFac::generateGrid(const double min, const double max,
                                           const double res) {
-  size_t n = std::floor((max - min) / res) + 2;
+  int n = std::floor((max - min) / res) + 2;
   std::vector<double> l;
   l.reserve(n);
-  for (size_t i = 0; i < n; ++i) {
+  for (int i = 0; i < n; ++i) {
     l.push_back(min + (i - 1) * res);
   }
   return l;
