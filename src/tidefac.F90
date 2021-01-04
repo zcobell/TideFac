@@ -419,6 +419,7 @@
                     REAL(8),INTENT(IN) :: dt
                     REAL(8),INTENT(IN) :: latitude
                     CALL c_calculateWithDt(this%ptr,dt,latitude)
+                    ierr = 0
                 END FUNCTION calculateWithDt
                 
                 INTEGER FUNCTION calculateWithDate(this,year,month,day,hour,minute,second,latitude) RESULT(ierr)
@@ -427,6 +428,7 @@
                     INTEGER,INTENT(IN) :: year,month,day,hour,minute,second
                     REAL(8),INTENT(IN) :: latitude
                     CALL c_calculateWithDate(this%ptr,year,month,day,hour,minute,second,latitude)
+                    ierr = 0
                 END FUNCTION calculateWithDate
                 
                 INTEGER FUNCTION calculateWithTwoDates(this,year1,month1,day1,hour1,minute1,second1,&
@@ -439,6 +441,7 @@
                     REAL(8),INTENT(IN) :: latitude
                     CALL c_calculateWithTwoDates(this%ptr,year1,month1,day1,hour1,minute1,second1,&
                                                           year2,month2,day2,hour2,minute2,second2,latitude)
+                    ierr = 0
                 END FUNCTION calculateWithTwoDates
 
                 INTEGER FUNCTION calculateGrid(this,dt) RESULT(ierr)
@@ -446,6 +449,7 @@
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     REAL(8),INTENT(IN)           :: dt
                     CALL c_calculateGrid(this%ptr,dt)
+                    ierr = 0
                 END FUNCTION calculateGrid
 
                 INTEGER FUNCTION generateLatitudeGrid(this,latmin,latmax,resolution) RESULT(ierr)
