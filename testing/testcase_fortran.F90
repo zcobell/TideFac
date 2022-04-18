@@ -33,7 +33,7 @@
                                                         8.883570557211046D0, 348.68678705977345D0, &
                                                         348.5130812984089D0, 0.5770160256675876D0 /)
 
-            REAL(8) :: tol = 100D0*EPSILON(1D0)
+            REAL(8) :: tol = 0.000000000001D0
             INTEGER :: I
             INTEGER :: ierr
             INTEGER :: year,month,day,hour,minute,second

@@ -33,7 +33,11 @@
  *
  */
 TideFac::TideFac()
-    : m_refTime(0), m_curTime(0), m_resolution(0.0), m_tides(1) {}
+    : m_refTime(0),
+      m_curTime(0),
+      m_resolution(0.0),
+      m_tides(1),
+      m_epoch(1899, 12, 31, 12, 0, 0) {}
 
 /**
  * @brief Constructor that initializes with a reference time
@@ -218,11 +222,8 @@ void TideFac::calculate(const Date &d1, const Date &d2, const double latitude) {
   std::vector<double> V1;
 
   for (size_t i = 0; i < TideFac::meanNumTides<size_t>(); ++i) {
-    std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    TideFac::computeOrbitalParameters(dateList[i], &astro);
-
-    std::vector<double> F, U, V;
-    TideFac::computeAstronomicalArguments(astro, latitude, F, U, V);
+    const auto astro = TideFac::computeSomeOrbitalParameters(dateList[i]);
+    auto [F, U, V] = TideFac::computeAstronomicalArguments(astro, latitude);
 
     if (i == 0) V1 = V;  // astro arg at start used
 
@@ -276,12 +277,11 @@ void TideFac::calculate(const Date &d) {
 
   this->m_curTime = d;
 
-  std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-  TideFac::computeOrbitalParameters(d, &astro);
+  const auto astro = TideFac::computeSomeOrbitalParameters(d);
 
   for (size_t i = 0; i < this->m_tides.size(); ++i) {
-    std::vector<double> F, U, V;
-    TideFac::computeAstronomicalArguments(astro, this->m_latgrid[i], F, U, V);
+    auto [F, U, V] =
+        TideFac::computeAstronomicalArguments(astro, this->m_latgrid[i]);
 
     this->m_tides[i].clear();
     this->m_tides[i].reserve(this->m_constituentIndex.size());
@@ -324,11 +324,8 @@ void TideFac::calculate(const Date &d, const double latitude) {
     return;
   }
 
-  std::array<double, 6> astro = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-  TideFac::computeOrbitalParameters(d, &astro);
-
-  std::vector<double> F, U, V;
-  TideFac::computeAstronomicalArguments(astro, latitude, F, U, V);
+  const auto astro = TideFac::computeSomeOrbitalParameters(d);
+  auto [F, U, V] = TideFac::computeAstronomicalArguments(astro, latitude);
 
   this->m_curTime = d;
 
@@ -360,11 +357,16 @@ TideFac::Tide TideFac::generateTide(const size_t index,
 
   TideFac::reorientAngularParameters(nc, eq, aa);
 
-  double amp, frequency, etrf;
-  std::tie(amp, frequency, etrf) = this->getStaticParameters(index);
+  auto [amp, frequency, etrf] = this->getStaticParameters(index);
 
-  return Tide(this->m_constituentNames[index], amp, frequency, etrf, nodeFactor,
-              eq, nc, aa);
+  return {this->m_constituentNames[index],
+          amp,
+          frequency,
+          etrf,
+          nodeFactor,
+          eq,
+          nc,
+          aa};
 }
 
 /**
@@ -373,99 +375,114 @@ TideFac::Tide TideFac::generateTide(const size_t index,
  * @param latitude location for the calculation
  * @return three vectors of tide factors in a tuple
  */
-void TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
-                                           const double latitude,
-                                           std::vector<double> &F,
-                                           std::vector<double> &U,
-                                           std::vector<double> &V) {
-  std::array<double, 162> rr = TideFac::computeRR(latitude);
-  std::array<double, 162> uu = TideFac::computeUU(astro);
-  std::array<std::complex<double>, 162> mat = TideFac::computeMat(uu, rr);
+std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
+TideFac::computeAstronomicalArguments(const std::array<double, 6> &astro,
+                                      const double latitude) {
+  const auto rr = TideFac::computeRR(latitude);
+  const auto uu = TideFac::computeUU(astro);
+  const auto mat = TideFac::computeMat(uu, rr);
 
-  std::vector<std::complex<double>> Fcomplex(
+  std::vector<std::complex<double>> F_complex(
       Constituent::constituents().size());
-  F.resize(Constituent::constituents().size());
-  U.resize(Constituent::constituents().size());
-  V.resize(Constituent::constituents().size());
+  std::vector<double> U(Constituent::constituents().size());
+  std::vector<double> V(Constituent::constituents().size());
 
-  TideFac::computePrimaryFactors(Fcomplex, U, V, mat, astro);
-  TideFac::computeMinorCorrections(Fcomplex, U, V);
-  F = TideFac::complexToReal(Fcomplex);
+  TideFac::computePrimaryFactors(F_complex, U, V, mat, astro);
+  TideFac::computeMinorCorrections(F_complex, U, V);
+  auto F = TideFac::complexToReal(F_complex);
+  return {F, U, V};
 }
 
 /**
  * @brief Computes the orbital parameters for the given date
  * @param d time for the calculation
- * @param astro astronomic arguments
- * @param ader astronomic arguments
+ * @return orbital parameters astro
  */
-void TideFac::computeOrbitalParameters(const Date &d,
-                                       std::array<double, 6> *astro,
-                                       std::array<double, 6> *ader) {
-  const Date epoch(1899, 12, 31, 12, 0, 0);
-  constexpr std::array<double, 4> sc{270.434164, 13.1763965268, -0.0000850,
-                                     0.000000039};
-  constexpr std::array<double, 4> hc{279.696678, 0.9856473354, 0.00002267,
-                                     0.000000000};
-  constexpr std::array<double, 4> pc{334.329556, 0.1114040803, -0.0007739,
-                                     -0.00000026};
-  constexpr std::array<double, 4> npc{-259.183275, 0.0529539222, -0.0001557,
-                                      -0.000000050};
-  constexpr std::array<double, 4> ppc{281.220844, 0.0000470684, 0.0000339,
-                                      0.000000070};
+std::array<double, 6> TideFac::computeSomeOrbitalParameters(const Date &d) {
+  const auto date_data = TideFac::computeOrbitalDates(d);
+  return TideFac::computeSomeOrbitalParameters(date_data);
+}
 
-  const Date jd(d - epoch.toSeconds());
+/**
+ * @brief Computes the orbital parameters for the given date
+ * @param d time for the calculation
+ * @return orbital parameters astro
+ */
+std::array<double, 6> TideFac::computeSomeOrbitalParameters(
+    const TideFac::OrbitalDateData &d) {
+  std::array<double, 6> astro{0, 0, 0, 0, 0, 0};
+
+  astro[1] = std::fmod((sc[0] * d.args[0] + sc[1] * d.args[1] +
+                        sc[2] * d.args[2] + sc[3] * d.args[3]) /
+                           360.0,
+                       1.0);
+  astro[2] = std::fmod((hc[0] * d.args[0] + hc[1] * d.args[1] +
+                        hc[2] * d.args[2] + hc[3] * d.args[3]) /
+                           360.0,
+                       1.0);
+  astro[3] = std::fmod((pc[0] * d.args[0] + pc[1] * d.args[1] +
+                        pc[2] * d.args[2] + pc[3] * d.args[3]) /
+                           360.0,
+                       1.0);
+  astro[4] = std::fmod((npc[0] * d.args[0] + npc[1] * d.args[1] +
+                        npc[2] * d.args[2] + npc[3] * d.args[3]) /
+                           360.0,
+                       1.0);
+  astro[5] = std::fmod((ppc[0] * d.args[0] + ppc[1] * d.args[1] +
+                        ppc[2] * d.args[2] + ppc[3] * d.args[3]) /
+                           360.0,
+                       1.0);
+  astro[0] = std::fmod(d.days, 1.0) + astro[2] - astro[1];
+
+  return astro;
+}
+
+TideFac::OrbitalDateData TideFac::computeOrbitalDates(const Date &d) {
+  const Date jd(d - m_epoch.toSeconds());
+  const long seconds = d.toSeconds();
+  const double days = static_cast<double>(seconds) / 86400.0;
   const double dd = static_cast<double>(jd.toSeconds()) / 86400.0;
   const double nd = dd / 10000.0;
   const std::array<double, 4> args{1.0, dd, nd * nd, nd * nd * nd};
+  return {seconds, jd, days, dd, nd, args};
+}
 
-  astro->at(1) = std::fmod(
-      (sc[0] * args[0] + sc[1] * args[1] + sc[2] * args[2] + sc[3] * args[3]) /
-          360.0,
-      1.0);
-  astro->at(2) = std::fmod(
-      (hc[0] * args[0] + hc[1] * args[1] + hc[2] * args[2] + hc[3] * args[3]) /
-          360.0,
-      1.0);
-  astro->at(3) = std::fmod(
-      (pc[0] * args[0] + pc[1] * args[1] + pc[2] * args[2] + pc[3] * args[3]) /
-          360.0,
-      1.0);
-  astro->at(4) = std::fmod((npc[0] * args[0] + npc[1] * args[1] +
-                            npc[2] * args[2] + npc[3] * args[3]) /
-                               360.0,
-                           1.0);
-  astro->at(5) = std::fmod((ppc[0] * args[0] + ppc[1] * args[1] +
-                            ppc[2] * args[2] + ppc[3] * args[3]) /
-                               360.0,
-                           1.0);
-  astro->at(0) = std::fmod(static_cast<double>(d.toSeconds()) / 86400.0, 1.0) +
-                 astro->at(2) - astro->at(1);
+/**
+ * @brief Computes the orbital parameters for the given date
+ * @param d time for the calculation
+ * return pair of arrays of astronomic arguments
+ */
+std::tuple<std::array<double, 6>, std::array<double, 6>>
+TideFac::computeAllOrbitalParameters(const Date &d) {
+  const auto date_data = TideFac::computeOrbitalDates(d);
+  const auto astro = computeSomeOrbitalParameters(date_data);
+  std::array<double, 6> ader{0, 0, 0, 0, 0, 0};
+  const std::array<double, 4> args2 = {0.0, 1.0, 2.0e-4 * date_data.nd,
+                                       3.0e-4 * date_data.nd * date_data.nd};
 
-  if (ader == nullptr) return;
+  ader[1] = std::fmod((sc[0] * date_data.args[0] + sc[1] * args2[1] +
+                       sc[2] * args2[2] + sc[3] * args2[3]) /
+                          360.0,
+                      1.0);
+  ader[2] = std::fmod((hc[0] * args2[0] + hc[1] * args2[1] + hc[2] * args2[2] +
+                       hc[3] * args2[3]) /
+                          360.0,
+                      1.0);
+  ader[3] = std::fmod((pc[0] * args2[0] + pc[1] * args2[1] + pc[2] * args2[2] +
+                       pc[3] * args2[3]) /
+                          360.0,
+                      1.0);
+  ader[4] = std::fmod((npc[0] * args2[0] + npc[1] * args2[1] +
+                       npc[2] * args2[2] + npc[3] * args2[3]) /
+                          360.0,
+                      1.0);
+  ader[5] = std::fmod((ppc[0] * args2[0] + ppc[1] * args2[1] +
+                       ppc[2] * args2[2] + ppc[3] * args2[3]) /
+                          360.0,
+                      1.0);
+  ader[0] = 1.0 + ader[2] - ader[1];
 
-  const std::array<double, 4> args2 = {0.0, 1.0, 2.0e-4 * nd, 3.0e-4 * nd * nd};
-  ader->at(1) = std::fmod((sc[0] * args[0] + sc[1] * args2[1] +
-                           sc[2] * args2[2] + sc[3] * args2[3]) /
-                              360.0,
-                          1.0);
-  ader->at(2) = std::fmod((hc[0] * args2[0] + hc[1] * args2[1] +
-                           hc[2] * args2[2] + hc[3] * args2[3]) /
-                              360.0,
-                          1.0);
-  ader->at(3) = std::fmod((pc[0] * args2[0] + pc[1] * args2[1] +
-                           pc[2] * args2[2] + pc[3] * args2[3]) /
-                              360.0,
-                          1.0);
-  ader->at(4) = std::fmod((npc[0] * args2[0] + npc[1] * args2[1] +
-                           npc[2] * args2[2] + npc[3] * args2[3]) /
-                              360.0,
-                          1.0);
-  ader->at(5) = std::fmod((ppc[0] * args2[0] + ppc[1] * args2[1] +
-                           ppc[2] * args2[2] + ppc[3] * args2[3]) /
-                              360.0,
-                          1.0);
-  ader->at(0) = 1.0 + ader->at(2) - ader->at(1);
+  return {astro, ader};
 }
 
 /**
@@ -483,7 +500,7 @@ void TideFac::show(const size_t index) const {
 
 /**
  * @brief Computes the matrix sum used in the calculation where constituent
- * indicies align
+ * indices align
  * @param mat input matrix
  * @param idx index of the tide
  * @return sum

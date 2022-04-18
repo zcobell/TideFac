@@ -29,9 +29,9 @@
 
 namespace Constituent {
 
-constexpr size_t constituentIndex(const char *name) {
+constexpr size_t constituentIndex(const std::string_view &name) {
   for (size_t i = 0; i < s_names.size(); ++i) {
-    if (std::strcmp(s_names[i], name) == 0) {
+    if (s_names[i] == name) {
       return i;
     }
   }

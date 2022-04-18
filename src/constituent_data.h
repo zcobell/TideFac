@@ -39,7 +39,7 @@ struct TC {
   const double earth_tide_reduction_factor{};
 };
 
-constexpr Constituent::TC c_nulltide{
+static constexpr Constituent::TC c_nulltide{
     "null",
     Constituent::null_value<double>(),
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -52,257 +52,266 @@ constexpr Constituent::TC c_nulltide{
     Constituent::null_value<double>(),
     Constituent::null_value<double>()};
 
-constexpr Constituent::TC c_Z0{"Z0",
-                               0.00e+00,
-                               {0.000000000000e+00, 0.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               Constituent::null_value<double>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<double>(),
-                               6.900000000000e-01};
-constexpr Constituent::TC c_SA{"SA",
-                               1.14E-04,
-                               {0.000000000000e+00, 0.00e+00, 1.00e+00,
-                                0.00e+00, 0.00e+00, -1.000000000000e+00},
-                               0.00e+00,
-                               Constituent::null_value<double>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               1.16E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_SSA{"SSA",
-                                2.28E-04,
-                                {0.000000000000e+00, 0.00e+00, 2.00e+00,
-                                 0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                Constituent::null_value<double>(),
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                7.30E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_MSM{"MSM",
-                                1.31E-03,
-                                {0.000000000000e+00, 1.00e+00, -2.00e+00,
-                                 1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                Constituent::null_value<double>(),
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<double>(),
-                                6.900000000000e-01};
-constexpr Constituent::TC c_MM{"MM",
-                               1.51E-03,
-                               {0.000000000000e+00, 1.00e+00, 0.00e+00,
-                                -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               Constituent::null_value<double>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               8.25E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_MSF{"MSF",
-                                2.82E-03,
-                                {0.000000000000e+00, 2.00e+00, -2.00e+00,
-                                 0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                Constituent::null_value<double>(),
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                1.38E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_MF{"MF",
-                               3.05E-03,
-                               {0.000000000000e+00, 2.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               Constituent::null_value<double>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               1.56E-01,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_ALP1{"ALP1",
-                                 3.44E-02,
-                                 {1.000000000000e+00, -4.00e+00, 2.00e+00,
-                                  1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -2.50E-01,
-                                 1.00e+00,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 2.78E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_2Q1{"2Q1",
-                                3.57E-02,
-                                {1.000000000000e+00, -3.00e+00, 0.00e+00,
-                                 2.00e+00, 0.00e+00, 0.000000000000e+00},
-                                -2.50E-01,
-                                3.00e+00,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                9.55E-03,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_SIG1{"SIG1",
-                                 3.59E-02,
-                                 {1.000000000000e+00, -3.00e+00, 2.00e+00,
-                                  0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -2.50E-01,
-                                 8.00e+00,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 1.15E-02,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_Q1{"Q1",
-                               3.72E-02,
-                               {1.000000000000e+00, -2.00e+00, 0.00e+00,
-                                1.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -2.50E-01,
-                               1.20e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               7.22E-02,
-                               6.950000000000e-01};
-constexpr Constituent::TC c_RHO1{"RHO1",
-                                 3.74E-02,
-                                 {1.000000000000e+00, -2.00e+00, 2.00e+00,
-                                  -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -2.50E-01,
-                                 2.20e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 1.37E-02,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_O1{"O1",
-                               3.87E-02,
-                               {1.000000000000e+00, -1.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -2.50E-01,
-                               2.70e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               3.77E-01,
-                               6.950000000000e-01};
-constexpr Constituent::TC c_TAU1{"TAU1",
-                                 3.90E-02,
-                                 {1.000000000000e+00, -1.00e+00, 2.00e+00,
-                                  0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 3.50e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -4.91E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_BET1{"BET1",
-                                 4.00E-02,
-                                 {1.000000000000e+00, 0.00e+00, -2.00e+00,
-                                  1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 4.00e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -2.78E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_NO1{"NO1",
-                                4.03E-02,
-                                {1.000000000000e+00, 0.00e+00, 0.00e+00,
-                                 1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                -7.50E-01,
-                                4.10e+01,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                -2.96E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_CHI1{"CHI1",
-                                 4.05E-02,
-                                 {1.000000000000e+00, 0.00e+00, 2.00e+00,
-                                  -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 5.00e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -5.66E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_PI1{"PI1",
-                                4.14E-02,
-                                {1.000000000000e+00, 1.00e+00, -3.00e+00,
-                                 0.00e+00, 0.00e+00, 1.000000000000e+00},
-                                -2.50E-01,
-                                5.20e+01,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                1.03E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_P1{"P1",
-                               4.16E-02,
-                               {1.000000000000e+00, 1.00e+00, -2.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -2.50E-01,
-                               5.30e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               1.76E-01,
-                               7.060000000000e-01};
-constexpr Constituent::TC c_S1{"S1",
-                               4.17E-02,
-                               {1.000000000000e+00, 1.00e+00, -1.00e+00,
-                                0.00e+00, 0.00e+00, 1.000000000000e+00},
-                               -7.50E-01,
-                               5.90e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -4.23E-03,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_K1{"K1",
-                               4.18E-02,
-                               {1.000000000000e+00, 1.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -7.50E-01,
-                               6.10e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -5.31E-01,
-                               7.360000000000e-01};
-constexpr Constituent::TC c_PSI1{"PSI1",
-                                 4.19E-02,
-                                 {1.000000000000e+00, 1.00e+00, 1.00e+00,
-                                  0.00e+00, 0.00e+00, -1.000000000000e+00},
-                                 -7.50E-01,
-                                 7.10e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -4.23E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_PHI1{"PHI1",
-                                 4.20E-02,
-                                 {1.000000000000e+00, 1.00e+00, 2.00e+00,
-                                  0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 7.20e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<double>(),
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_THE1{"THE1",
-                                 4.31E-02,
-                                 {1.000000000000e+00, 2.00e+00, -2.00e+00,
-                                  1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 7.70e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -7.56E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_J1{"J1",
-                               4.33E-02,
-                               {1.000000000000e+00, 2.00e+00, 0.00e+00,
-                                -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -7.50E-01,
-                               8.10e+01,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -2.96E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_2PO1{
+static constexpr Constituent::TC c_Z0{"Z0",
+                                      0.00e+00,
+                                      {0.000000000000e+00, 0.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      Constituent::null_value<double>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<double>(),
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_SA{"SA",
+                                      1.14E-04,
+                                      {0.000000000000e+00, 0.00e+00, 1.00e+00,
+                                       0.00e+00, 0.00e+00, -1.000000000000e+00},
+                                      0.00e+00,
+                                      Constituent::null_value<double>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      1.16E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_SSA{"SSA",
+                                       2.28E-04,
+                                       {0.000000000000e+00, 0.00e+00, 2.00e+00,
+                                        0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       Constituent::null_value<double>(),
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       7.30E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_MSM{"MSM",
+                                       1.31E-03,
+                                       {0.000000000000e+00, 1.00e+00, -2.00e+00,
+                                        1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       Constituent::null_value<double>(),
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<double>(),
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_MM{"MM",
+                                      1.51E-03,
+                                      {0.000000000000e+00, 1.00e+00, 0.00e+00,
+                                       -1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      Constituent::null_value<double>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      8.25E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_MSF{"MSF",
+                                       2.82E-03,
+                                       {0.000000000000e+00, 2.00e+00, -2.00e+00,
+                                        0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       Constituent::null_value<double>(),
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       1.38E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_MF{"MF",
+                                      3.05E-03,
+                                      {0.000000000000e+00, 2.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      Constituent::null_value<double>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      1.56E-01,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_ALP1{
+    "ALP1",
+    3.44E-02,
+    {1.000000000000e+00, -4.00e+00, 2.00e+00, 1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -2.50E-01,
+    1.00e+00,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    2.78E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_2Q1{"2Q1",
+                                       3.57E-02,
+                                       {1.000000000000e+00, -3.00e+00, 0.00e+00,
+                                        2.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       -2.50E-01,
+                                       3.00e+00,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       9.55E-03,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_SIG1{
+    "SIG1",
+    3.59E-02,
+    {1.000000000000e+00, -3.00e+00, 2.00e+00, 0.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -2.50E-01,
+    8.00e+00,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    1.15E-02,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_Q1{"Q1",
+                                      3.72E-02,
+                                      {1.000000000000e+00, -2.00e+00, 0.00e+00,
+                                       1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -2.50E-01,
+                                      1.20e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      7.22E-02,
+                                      6.950000000000e-01};
+static constexpr Constituent::TC c_RHO1{
+    "RHO1",
+    3.74E-02,
+    {1.000000000000e+00, -2.00e+00, 2.00e+00, -1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -2.50E-01,
+    2.20e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    1.37E-02,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_O1{"O1",
+                                      3.87E-02,
+                                      {1.000000000000e+00, -1.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -2.50E-01,
+                                      2.70e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      3.77E-01,
+                                      6.950000000000e-01};
+static constexpr Constituent::TC c_TAU1{
+    "TAU1",
+    3.90E-02,
+    {1.000000000000e+00, -1.00e+00, 2.00e+00, 0.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    3.50e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -4.91E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_BET1{
+    "BET1",
+    4.00E-02,
+    {1.000000000000e+00, 0.00e+00, -2.00e+00, 1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    4.00e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -2.78E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_NO1{"NO1",
+                                       4.03E-02,
+                                       {1.000000000000e+00, 0.00e+00, 0.00e+00,
+                                        1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       -7.50E-01,
+                                       4.10e+01,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       -2.96E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_CHI1{
+    "CHI1",
+    4.05E-02,
+    {1.000000000000e+00, 0.00e+00, 2.00e+00, -1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    5.00e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -5.66E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_PI1{"PI1",
+                                       4.14E-02,
+                                       {1.000000000000e+00, 1.00e+00, -3.00e+00,
+                                        0.00e+00, 0.00e+00, 1.000000000000e+00},
+                                       -2.50E-01,
+                                       5.20e+01,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       1.03E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_P1{"P1",
+                                      4.16E-02,
+                                      {1.000000000000e+00, 1.00e+00, -2.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -2.50E-01,
+                                      5.30e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      1.76E-01,
+                                      7.060000000000e-01};
+static constexpr Constituent::TC c_S1{"S1",
+                                      4.17E-02,
+                                      {1.000000000000e+00, 1.00e+00, -1.00e+00,
+                                       0.00e+00, 0.00e+00, 1.000000000000e+00},
+                                      -7.50E-01,
+                                      5.90e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -4.23E-03,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_K1{"K1",
+                                      4.18E-02,
+                                      {1.000000000000e+00, 1.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -7.50E-01,
+                                      6.10e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -5.31E-01,
+                                      7.360000000000e-01};
+static constexpr Constituent::TC c_PSI1{
+    "PSI1",
+    4.19E-02,
+    {1.000000000000e+00, 1.00e+00, 1.00e+00, 0.00e+00, 0.00e+00,
+     -1.000000000000e+00},
+    -7.50E-01,
+    7.10e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -4.23E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_PHI1{
+    "PHI1",
+    4.20E-02,
+    {1.000000000000e+00, 1.00e+00, 2.00e+00, 0.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    7.20e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    Constituent::null_value<double>(),
+    6.900000000000e-01};
+static constexpr Constituent::TC c_THE1{
+    "THE1",
+    4.31E-02,
+    {1.000000000000e+00, 2.00e+00, -2.00e+00, 1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    7.70e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -7.56E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_J1{"J1",
+                                      4.33E-02,
+                                      {1.000000000000e+00, 2.00e+00, 0.00e+00,
+                                       -1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -7.50E-01,
+                                      8.10e+01,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -2.96E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_2PO1{
     "2PO1",
     4.44E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -314,7 +323,7 @@ constexpr Constituent::TC c_2PO1{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SO1{
+static constexpr Constituent::TC c_SO1{
     "SO1",
     4.46E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -326,27 +335,28 @@ constexpr Constituent::TC c_SO1{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_OO1{"OO1",
-                                4.48E-02,
-                                {1.000000000000e+00, 3.00e+00, 0.00e+00,
-                                 0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                -7.50E-01,
-                                9.10e+01,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                -1.62E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_UPS1{"UPS1",
-                                 4.63E-02,
-                                 {1.000000000000e+00, 4.00e+00, 0.00e+00,
-                                  -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -7.50E-01,
-                                 9.90e+01,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -3.11E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_ST36{
+static constexpr Constituent::TC c_OO1{"OO1",
+                                       4.48E-02,
+                                       {1.000000000000e+00, 3.00e+00, 0.00e+00,
+                                        0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       -7.50E-01,
+                                       9.10e+01,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       -1.62E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_UPS1{
+    "UPS1",
+    4.63E-02,
+    {1.000000000000e+00, 4.00e+00, 0.00e+00, -1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -7.50E-01,
+    9.90e+01,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -3.11E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_ST36{
     "ST36",
     7.34E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -358,7 +368,7 @@ constexpr Constituent::TC c_ST36{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2NS2{
+static constexpr Constituent::TC c_2NS2{
     "2NS2",
     7.47E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -370,7 +380,7 @@ constexpr Constituent::TC c_2NS2{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST37{
+static constexpr Constituent::TC c_ST37{
     "ST37",
     7.49E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -382,7 +392,7 @@ constexpr Constituent::TC c_ST37{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST1{
+static constexpr Constituent::TC c_ST1{
     "ST1",
     7.49E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -394,27 +404,28 @@ constexpr Constituent::TC c_ST1{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_OQ2{"OQ2",
-                                7.60E-02,
-                                {2.000000000000e+00, -3.00e+00, 0.00e+00,
-                                 3.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                1.04e+02,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                2.59E-03,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_EPS2{"EPS2",
-                                 7.62E-02,
-                                 {2.000000000000e+00, -3.00e+00, 2.00e+00,
-                                  1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 0.00e+00,
-                                 1.06e+02,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 6.71E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_ST2{
+static constexpr Constituent::TC c_OQ2{"OQ2",
+                                       7.60E-02,
+                                       {2.000000000000e+00, -3.00e+00, 0.00e+00,
+                                        3.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       1.04e+02,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       2.59E-03,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_EPS2{
+    "EPS2",
+    7.62E-02,
+    {2.000000000000e+00, -3.00e+00, 2.00e+00, 1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    0.00e+00,
+    1.06e+02,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    6.71E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_ST2{
     "ST2",
     7.64E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -426,7 +437,7 @@ constexpr Constituent::TC c_ST2{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST3{
+static constexpr Constituent::TC c_ST3{
     "ST3",
     7.72E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -438,7 +449,7 @@ constexpr Constituent::TC c_ST3{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_O2{
+static constexpr Constituent::TC c_O2{
     "O2",
     7.75E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -450,27 +461,27 @@ constexpr Constituent::TC c_O2{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2N2{"2N2",
-                                7.75E-02,
-                                {2.000000000000e+00, -2.00e+00, 0.00e+00,
-                                 2.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                1.09e+02,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                2.30E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_MU2{"MU2",
-                                7.77E-02,
-                                {2.000000000000e+00, -2.00e+00, 2.00e+00,
-                                 0.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                1.13e+02,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                2.78E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_SNK2{
+static constexpr Constituent::TC c_2N2{"2N2",
+                                       7.75E-02,
+                                       {2.000000000000e+00, -2.00e+00, 0.00e+00,
+                                        2.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       1.09e+02,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       2.30E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_MU2{"MU2",
+                                       7.77E-02,
+                                       {2.000000000000e+00, -2.00e+00, 2.00e+00,
+                                        0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                       0.00e+00,
+                                       1.13e+02,
+                                       Constituent::null_value<int>(),
+                                       Constituent::null_value<int>(),
+                                       2.78E-02,
+                                       6.900000000000e-01};
+static constexpr Constituent::TC c_SNK2{
     "SNK2",
     7.88E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -482,27 +493,28 @@ constexpr Constituent::TC c_SNK2{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_N2{"N2",
-                               7.90E-02,
-                               {2.000000000000e+00, -1.00e+00, 0.00e+00,
-                                1.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               1.16e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               1.74E-01,
-                               6.930000000000e-01};
-constexpr Constituent::TC c_NU2{"NU2",
-                                7.92E-02,
-                                {2.000000000000e+00, -1.00e+00, 2.00e+00,
-                                 -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                0.00e+00,
-                                1.20e+02,
-                                Constituent::null_value<int>(),
-                                Constituent::null_value<int>(),
-                                3.30E-02,
-                                6.900000000000e-01};
-constexpr Constituent::TC c_ST4{
+static constexpr Constituent::TC c_N2{"N2",
+                                      7.90E-02,
+                                      {2.000000000000e+00, -1.00e+00, 0.00e+00,
+                                       1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      1.16e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      1.74E-01,
+                                      6.930000000000e-01};
+static constexpr Constituent::TC c_NU2{
+    "NU2",
+    7.92E-02,
+    {2.000000000000e+00, -1.00e+00, 2.00e+00, -1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    0.00e+00,
+    1.20e+02,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    3.30E-02,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_ST4{
     "ST4",
     7.95E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -514,7 +526,7 @@ constexpr Constituent::TC c_ST4{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_OP2{
+static constexpr Constituent::TC c_OP2{
     "OP2",
     8.03E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -526,47 +538,48 @@ constexpr Constituent::TC c_OP2{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_GAM2{"GAM2",
-                                 8.03E-02,
-                                 {2.000000000000e+00, 0.00e+00, -2.00e+00,
-                                  2.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -5.00E-01,
-                                 1.24e+02,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -2.73E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_H1{"H1",
-                               8.04E-02,
-                               {2.000000000000e+00, 0.00e+00, -1.00e+00,
-                                0.00e+00, 0.00e+00, 1.000000000000e+00},
-                               -5.00E-01,
-                               1.27e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -3.14E-03,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_M2{"M2",
-                               8.05E-02,
-                               {2.000000000000e+00, 0.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               1.29e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               9.08E-01,
-                               6.930000000000e-01};
-constexpr Constituent::TC c_H2{"H2",
-                               8.06E-02,
-                               {2.000000000000e+00, 0.00e+00, 1.00e+00,
-                                0.00e+00, 0.00e+00, -1.000000000000e+00},
-                               0.00e+00,
-                               1.38e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               2.76E-03,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_MKS2{
+static constexpr Constituent::TC c_GAM2{
+    "GAM2",
+    8.03E-02,
+    {2.000000000000e+00, 0.00e+00, -2.00e+00, 2.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -5.00E-01,
+    1.24e+02,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -2.73E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_H1{"H1",
+                                      8.04E-02,
+                                      {2.000000000000e+00, 0.00e+00, -1.00e+00,
+                                       0.00e+00, 0.00e+00, 1.000000000000e+00},
+                                      -5.00E-01,
+                                      1.27e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -3.14E-03,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_M2{"M2",
+                                      8.05E-02,
+                                      {2.000000000000e+00, 0.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      1.29e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      9.08E-01,
+                                      6.930000000000e-01};
+static constexpr Constituent::TC c_H2{"H2",
+                                      8.06E-02,
+                                      {2.000000000000e+00, 0.00e+00, 1.00e+00,
+                                       0.00e+00, 0.00e+00, -1.000000000000e+00},
+                                      0.00e+00,
+                                      1.38e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      2.76E-03,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_MKS2{
     "MKS2",
     8.07E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -578,7 +591,7 @@ constexpr Constituent::TC c_MKS2{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST5{
+static constexpr Constituent::TC c_ST5{
     "ST5",
     8.10E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -590,7 +603,7 @@ constexpr Constituent::TC c_ST5{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST6{
+static constexpr Constituent::TC c_ST6{
     "ST6",
     8.16E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -602,27 +615,28 @@ constexpr Constituent::TC c_ST6{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_LDA2{"LDA2",
-                                 8.18E-02,
-                                 {2.000000000000e+00, 1.00e+00, -2.00e+00,
-                                  1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 -5.00E-01,
-                                 1.39e+02,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 -6.70E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_L2{"L2",
-                               8.20E-02,
-                               {2.000000000000e+00, 1.00e+00, 0.00e+00,
-                                -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -5.00E-01,
-                               1.40e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -2.57E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_2SK2{
+static constexpr Constituent::TC c_LDA2{
+    "LDA2",
+    8.18E-02,
+    {2.000000000000e+00, 1.00e+00, -2.00e+00, 1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    -5.00E-01,
+    1.39e+02,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    -6.70E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_L2{"L2",
+                                      8.20E-02,
+                                      {2.000000000000e+00, 1.00e+00, 0.00e+00,
+                                       -1.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -5.00E-01,
+                                      1.40e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -2.57E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_2SK2{
     "2SK2",
     8.31E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -634,47 +648,47 @@ constexpr Constituent::TC c_2SK2{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_T2{"T2",
-                               8.32E-02,
-                               {2.000000000000e+00, 2.00e+00, -3.00e+00,
-                                0.00e+00, 0.00e+00, 1.000000000000e+00},
-                               0.00e+00,
-                               Constituent::null_value<double>(),
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               2.48E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_S2{"S2",
-                               8.33E-02,
-                               {2.000000000000e+00, 2.00e+00, -2.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               1.45e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               4.24E-01,
-                               6.930000000000e-01};
-constexpr Constituent::TC c_R2{"R2",
-                               8.34E-02,
-                               {2.000000000000e+00, 2.00e+00, -1.00e+00,
-                                0.00e+00, 0.00e+00, -1.000000000000e+00},
-                               -5.00E-01,
-                               1.48e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -3.54E-03,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_K2{"K2",
-                               8.36E-02,
-                               {2.000000000000e+00, 2.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               0.00e+00,
-                               1.50e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               1.15E-01,
-                               6.930000000000e-01};
-constexpr Constituent::TC c_MSN2{
+static constexpr Constituent::TC c_T2{"T2",
+                                      8.32E-02,
+                                      {2.000000000000e+00, 2.00e+00, -3.00e+00,
+                                       0.00e+00, 0.00e+00, 1.000000000000e+00},
+                                      0.00e+00,
+                                      Constituent::null_value<double>(),
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      2.48E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_S2{"S2",
+                                      8.33E-02,
+                                      {2.000000000000e+00, 2.00e+00, -2.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      1.45e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      4.24E-01,
+                                      6.930000000000e-01};
+static constexpr Constituent::TC c_R2{"R2",
+                                      8.34E-02,
+                                      {2.000000000000e+00, 2.00e+00, -1.00e+00,
+                                       0.00e+00, 0.00e+00, -1.000000000000e+00},
+                                      -5.00E-01,
+                                      1.48e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -3.54E-03,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_K2{"K2",
+                                      8.36E-02,
+                                      {2.000000000000e+00, 2.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      0.00e+00,
+                                      1.50e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      1.15E-01,
+                                      6.930000000000e-01};
+static constexpr Constituent::TC c_MSN2{
     "MSN2",
     8.48E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -686,17 +700,18 @@ constexpr Constituent::TC c_MSN2{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ETA2{"ETA2",
-                                 8.51E-02,
-                                 {2.000000000000e+00, 3.00e+00, 0.00e+00,
-                                  -1.00e+00, 0.00e+00, 0.000000000000e+00},
-                                 0.00e+00,
-                                 1.55e+02,
-                                 Constituent::null_value<int>(),
-                                 Constituent::null_value<int>(),
-                                 6.43E-03,
-                                 6.900000000000e-01};
-constexpr Constituent::TC c_ST7{
+static constexpr Constituent::TC c_ETA2{
+    "ETA2",
+    8.51E-02,
+    {2.000000000000e+00, 3.00e+00, 0.00e+00, -1.00e+00, 0.00e+00,
+     0.000000000000e+00},
+    0.00e+00,
+    1.55e+02,
+    Constituent::null_value<int>(),
+    Constituent::null_value<int>(),
+    6.43E-03,
+    6.900000000000e-01};
+static constexpr Constituent::TC c_ST7{
     "ST7",
     8.53E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -708,7 +723,7 @@ constexpr Constituent::TC c_ST7{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2SM2{
+static constexpr Constituent::TC c_2SM2{
     "2SM2",
     8.62E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -720,7 +735,7 @@ constexpr Constituent::TC c_2SM2{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST38{
+static constexpr Constituent::TC c_ST38{
     "ST38",
     8.64E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -732,7 +747,7 @@ constexpr Constituent::TC c_ST38{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SKM2{
+static constexpr Constituent::TC c_SKM2{
     "SKM2",
     8.64E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -744,7 +759,7 @@ constexpr Constituent::TC c_SKM2{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2SN2{
+static constexpr Constituent::TC c_2SN2{
     "2SN2",
     8.77E-02,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -756,7 +771,7 @@ constexpr Constituent::TC c_2SN2{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_NO3{
+static constexpr Constituent::TC c_NO3{
     "NO3",
     1.18E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -768,7 +783,7 @@ constexpr Constituent::TC c_NO3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MO3{
+static constexpr Constituent::TC c_MO3{
     "MO3",
     1.19E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -780,17 +795,17 @@ constexpr Constituent::TC c_MO3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M3{"M3",
-                               1.21E-01,
-                               {3.000000000000e+00, 0.00e+00, 0.00e+00,
-                                0.00e+00, 0.00e+00, 0.000000000000e+00},
-                               -5.00E-01,
-                               1.62e+02,
-                               Constituent::null_value<int>(),
-                               Constituent::null_value<int>(),
-                               -1.19E-02,
-                               6.900000000000e-01};
-constexpr Constituent::TC c_NK3{
+static constexpr Constituent::TC c_M3{"M3",
+                                      1.21E-01,
+                                      {3.000000000000e+00, 0.00e+00, 0.00e+00,
+                                       0.00e+00, 0.00e+00, 0.000000000000e+00},
+                                      -5.00E-01,
+                                      1.62e+02,
+                                      Constituent::null_value<int>(),
+                                      Constituent::null_value<int>(),
+                                      -1.19E-02,
+                                      6.900000000000e-01};
+static constexpr Constituent::TC c_NK3{
     "NK3",
     1.21E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -802,7 +817,7 @@ constexpr Constituent::TC c_NK3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SO3{
+static constexpr Constituent::TC c_SO3{
     "SO3",
     1.22E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -814,7 +829,7 @@ constexpr Constituent::TC c_SO3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MK3{
+static constexpr Constituent::TC c_MK3{
     "MK3",
     1.22E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -826,7 +841,7 @@ constexpr Constituent::TC c_MK3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SP3{
+static constexpr Constituent::TC c_SP3{
     "SP3",
     1.25E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -838,7 +853,7 @@ constexpr Constituent::TC c_SP3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SK3{
+static constexpr Constituent::TC c_SK3{
     "SK3",
     1.25E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -850,7 +865,7 @@ constexpr Constituent::TC c_SK3{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST8{
+static constexpr Constituent::TC c_ST8{
     "ST8",
     1.57E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -862,7 +877,7 @@ constexpr Constituent::TC c_ST8{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_N4{
+static constexpr Constituent::TC c_N4{
     "N4",
     1.58E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -874,7 +889,7 @@ constexpr Constituent::TC c_N4{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MS4{
+static constexpr Constituent::TC c_3MS4{
     "3MS4",
     1.58E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -886,7 +901,7 @@ constexpr Constituent::TC c_3MS4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST39{
+static constexpr Constituent::TC c_ST39{
     "ST39",
     1.59E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -898,7 +913,7 @@ constexpr Constituent::TC c_ST39{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MN4{
+static constexpr Constituent::TC c_MN4{
     "MN4",
     1.60E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -910,7 +925,7 @@ constexpr Constituent::TC c_MN4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST9{
+static constexpr Constituent::TC c_ST9{
     "ST9",
     1.60E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -922,7 +937,7 @@ constexpr Constituent::TC c_ST9{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST40{
+static constexpr Constituent::TC c_ST40{
     "ST40",
     1.61E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -934,7 +949,7 @@ constexpr Constituent::TC c_ST40{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M4{
+static constexpr Constituent::TC c_M4{
     "M4",
     1.61E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -946,7 +961,7 @@ constexpr Constituent::TC c_M4{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST10{
+static constexpr Constituent::TC c_ST10{
     "ST10",
     1.61E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -958,7 +973,7 @@ constexpr Constituent::TC c_ST10{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SN4{
+static constexpr Constituent::TC c_SN4{
     "SN4",
     1.62E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -970,7 +985,7 @@ constexpr Constituent::TC c_SN4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_KN4{
+static constexpr Constituent::TC c_KN4{
     "KN4",
     1.63E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -982,7 +997,7 @@ constexpr Constituent::TC c_KN4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MS4{
+static constexpr Constituent::TC c_MS4{
     "MS4",
     1.64E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -994,7 +1009,7 @@ constexpr Constituent::TC c_MS4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MK4{
+static constexpr Constituent::TC c_MK4{
     "MK4",
     1.64E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1006,7 +1021,7 @@ constexpr Constituent::TC c_MK4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SL4{
+static constexpr Constituent::TC c_SL4{
     "SL4",
     1.65E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1018,7 +1033,7 @@ constexpr Constituent::TC c_SL4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_S4{
+static constexpr Constituent::TC c_S4{
     "S4",
     1.67E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1030,7 +1045,7 @@ constexpr Constituent::TC c_S4{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_SK4{
+static constexpr Constituent::TC c_SK4{
     "SK4",
     1.67E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1042,7 +1057,7 @@ constexpr Constituent::TC c_SK4{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MNO5{
+static constexpr Constituent::TC c_MNO5{
     "MNO5",
     1.98E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1054,7 +1069,7 @@ constexpr Constituent::TC c_MNO5{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MO5{
+static constexpr Constituent::TC c_2MO5{
     "2MO5",
     2.00E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1066,7 +1081,7 @@ constexpr Constituent::TC c_2MO5{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MP5{
+static constexpr Constituent::TC c_3MP5{
     "3MP5",
     2.00E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1078,7 +1093,7 @@ constexpr Constituent::TC c_3MP5{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MNK5{
+static constexpr Constituent::TC c_MNK5{
     "MNK5",
     2.01E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1090,7 +1105,7 @@ constexpr Constituent::TC c_MNK5{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MP5{
+static constexpr Constituent::TC c_2MP5{
     "2MP5",
     2.03E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1102,7 +1117,7 @@ constexpr Constituent::TC c_2MP5{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MK5{
+static constexpr Constituent::TC c_2MK5{
     "2MK5",
     2.03E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1114,7 +1129,7 @@ constexpr Constituent::TC c_2MK5{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MSK5{
+static constexpr Constituent::TC c_MSK5{
     "MSK5",
     2.06E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1126,7 +1141,7 @@ constexpr Constituent::TC c_MSK5{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3KM5{
+static constexpr Constituent::TC c_3KM5{
     "3KM5",
     2.06E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1138,7 +1153,7 @@ constexpr Constituent::TC c_3KM5{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2SK5{
+static constexpr Constituent::TC c_2SK5{
     "2SK5",
     2.08E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1150,7 +1165,7 @@ constexpr Constituent::TC c_2SK5{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST11{
+static constexpr Constituent::TC c_ST11{
     "ST11",
     2.37E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1162,7 +1177,7 @@ constexpr Constituent::TC c_ST11{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2NM6{
+static constexpr Constituent::TC c_2NM6{
     "2NM6",
     2.39E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1174,7 +1189,7 @@ constexpr Constituent::TC c_2NM6{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST12{
+static constexpr Constituent::TC c_ST12{
     "ST12",
     2.39E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1186,7 +1201,7 @@ constexpr Constituent::TC c_ST12{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MN6{
+static constexpr Constituent::TC c_2MN6{
     "2MN6",
     2.40E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1198,7 +1213,7 @@ constexpr Constituent::TC c_2MN6{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST13{
+static constexpr Constituent::TC c_ST13{
     "ST13",
     2.40E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1210,7 +1225,7 @@ constexpr Constituent::TC c_ST13{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST41{
+static constexpr Constituent::TC c_ST41{
     "ST41",
     2.41E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1222,7 +1237,7 @@ constexpr Constituent::TC c_ST41{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M6{
+static constexpr Constituent::TC c_M6{
     "M6",
     2.42E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1234,7 +1249,7 @@ constexpr Constituent::TC c_M6{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MSN6{
+static constexpr Constituent::TC c_MSN6{
     "MSN6",
     2.43E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1246,7 +1261,7 @@ constexpr Constituent::TC c_MSN6{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MKN6{
+static constexpr Constituent::TC c_MKN6{
     "MKN6",
     2.43E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1258,7 +1273,7 @@ constexpr Constituent::TC c_MKN6{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST42{
+static constexpr Constituent::TC c_ST42{
     "ST42",
     2.44E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1270,7 +1285,7 @@ constexpr Constituent::TC c_ST42{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MS6{
+static constexpr Constituent::TC c_2MS6{
     "2MS6",
     2.44E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1282,7 +1297,7 @@ constexpr Constituent::TC c_2MS6{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2MK6{
+static constexpr Constituent::TC c_2MK6{
     "2MK6",
     2.45E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1294,7 +1309,7 @@ constexpr Constituent::TC c_2MK6{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_NSK6{
+static constexpr Constituent::TC c_NSK6{
     "NSK6",
     2.46E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1306,7 +1321,7 @@ constexpr Constituent::TC c_NSK6{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_2SM6{
+static constexpr Constituent::TC c_2SM6{
     "2SM6",
     2.47E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1318,7 +1333,7 @@ constexpr Constituent::TC c_2SM6{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_MSK6{
+static constexpr Constituent::TC c_MSK6{
     "MSK6",
     2.47E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1330,7 +1345,7 @@ constexpr Constituent::TC c_MSK6{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_S6{
+static constexpr Constituent::TC c_S6{
     "S6",
     2.50E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1342,7 +1357,7 @@ constexpr Constituent::TC c_S6{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST14{
+static constexpr Constituent::TC c_ST14{
     "ST14",
     2.79E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1354,7 +1369,7 @@ constexpr Constituent::TC c_ST14{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST15{
+static constexpr Constituent::TC c_ST15{
     "ST15",
     2.80E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1366,7 +1381,7 @@ constexpr Constituent::TC c_ST15{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M7{
+static constexpr Constituent::TC c_M7{
     "M7",
     2.82E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1378,7 +1393,7 @@ constexpr Constituent::TC c_M7{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST16{
+static constexpr Constituent::TC c_ST16{
     "ST16",
     2.83E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1390,7 +1405,7 @@ constexpr Constituent::TC c_ST16{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MK7{
+static constexpr Constituent::TC c_3MK7{
     "3MK7",
     2.83E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1402,7 +1417,7 @@ constexpr Constituent::TC c_3MK7{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST17{
+static constexpr Constituent::TC c_ST17{
     "ST17",
     2.86E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1414,7 +1429,7 @@ constexpr Constituent::TC c_ST17{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST18{
+static constexpr Constituent::TC c_ST18{
     "ST18",
     3.19E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1426,7 +1441,7 @@ constexpr Constituent::TC c_ST18{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MN8{
+static constexpr Constituent::TC c_3MN8{
     "3MN8",
     3.21E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1438,7 +1453,7 @@ constexpr Constituent::TC c_3MN8{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST19{
+static constexpr Constituent::TC c_ST19{
     "ST19",
     3.21E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1450,7 +1465,7 @@ constexpr Constituent::TC c_ST19{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M8{
+static constexpr Constituent::TC c_M8{
     "M8",
     3.22E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1462,7 +1477,7 @@ constexpr Constituent::TC c_M8{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST20{
+static constexpr Constituent::TC c_ST20{
     "ST20",
     3.23E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1474,7 +1489,7 @@ constexpr Constituent::TC c_ST20{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST21{
+static constexpr Constituent::TC c_ST21{
     "ST21",
     3.24E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1486,7 +1501,7 @@ constexpr Constituent::TC c_ST21{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MS8{
+static constexpr Constituent::TC c_3MS8{
     "3MS8",
     3.25E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1498,7 +1513,7 @@ constexpr Constituent::TC c_3MS8{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_3MK8{
+static constexpr Constituent::TC c_3MK8{
     "3MK8",
     3.25E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1510,7 +1525,7 @@ constexpr Constituent::TC c_3MK8{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST22{
+static constexpr Constituent::TC c_ST22{
     "ST22",
     3.26E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1522,7 +1537,7 @@ constexpr Constituent::TC c_ST22{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST23{
+static constexpr Constituent::TC c_ST23{
     "ST23",
     3.28E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1534,7 +1549,7 @@ constexpr Constituent::TC c_ST23{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST24{
+static constexpr Constituent::TC c_ST24{
     "ST24",
     3.28E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1546,7 +1561,7 @@ constexpr Constituent::TC c_ST24{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST25{
+static constexpr Constituent::TC c_ST25{
     "ST25",
     3.61E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1558,7 +1573,7 @@ constexpr Constituent::TC c_ST25{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST26{
+static constexpr Constituent::TC c_ST26{
     "ST26",
     3.62E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1570,7 +1585,7 @@ constexpr Constituent::TC c_ST26{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_4MK9{
+static constexpr Constituent::TC c_4MK9{
     "4MK9",
     3.64E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1582,7 +1597,7 @@ constexpr Constituent::TC c_4MK9{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST27{
+static constexpr Constituent::TC c_ST27{
     "ST27",
     3.67E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1594,7 +1609,7 @@ constexpr Constituent::TC c_ST27{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST28{
+static constexpr Constituent::TC c_ST28{
     "ST28",
     4.01E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1606,7 +1621,7 @@ constexpr Constituent::TC c_ST28{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M10{
+static constexpr Constituent::TC c_M10{
     "M10",
     4.03E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1618,7 +1633,7 @@ constexpr Constituent::TC c_M10{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST29{
+static constexpr Constituent::TC c_ST29{
     "ST29",
     4.04E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1630,7 +1645,7 @@ constexpr Constituent::TC c_ST29{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST30{
+static constexpr Constituent::TC c_ST30{
     "ST30",
     4.05E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1642,7 +1657,7 @@ constexpr Constituent::TC c_ST30{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST31{
+static constexpr Constituent::TC c_ST31{
     "ST31",
     4.07E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1654,7 +1669,7 @@ constexpr Constituent::TC c_ST31{
     4,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST32{
+static constexpr Constituent::TC c_ST32{
     "ST32",
     4.08E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1666,7 +1681,7 @@ constexpr Constituent::TC c_ST32{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST33{
+static constexpr Constituent::TC c_ST33{
     "ST33",
     4.47E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1678,7 +1693,7 @@ constexpr Constituent::TC c_ST33{
     3,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_M12{
+static constexpr Constituent::TC c_M12{
     "M12",
     4.83E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1690,7 +1705,7 @@ constexpr Constituent::TC c_M12{
     1,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST34{
+static constexpr Constituent::TC c_ST34{
     "ST34",
     4.86E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1702,7 +1717,7 @@ constexpr Constituent::TC c_ST34{
     2,
     Constituent::null_value<double>(),
     6.900000000000e-01};
-constexpr Constituent::TC c_ST35{
+static constexpr Constituent::TC c_ST35{
     "ST35",
     4.87E-01,
     {Constituent::null_value<double>(), Constituent::null_value<double>(),
@@ -1774,7 +1789,7 @@ constexpr Constituent::TC c_ST35{
 //     {"ST31", &c_ST31}, {"ST32", &c_ST32}, {"ST33", &c_ST33}, {"M12", &c_M12},
 //     {"ST34", &c_ST34}, {"ST35", &c_ST35}};
 
-constexpr std::array<Constituent::TC, 146> s_alltides = {
+static constexpr std::array<Constituent::TC, 146> s_alltides = {
     c_Z0,   c_SA,   c_SSA,  c_MSM,  c_MM,   c_MSF,  c_MF,   c_ALP1, c_2Q1,
     c_SIG1, c_Q1,   c_RHO1, c_O1,   c_TAU1, c_BET1, c_NO1,  c_CHI1, c_PI1,
     c_P1,   c_S1,   c_K1,   c_PSI1, c_PHI1, c_THE1, c_J1,   c_2PO1, c_SO1,
@@ -1793,7 +1808,7 @@ constexpr std::array<Constituent::TC, 146> s_alltides = {
     c_ST27, c_ST28, c_M10,  c_ST29, c_ST30, c_ST31, c_ST32, c_ST33, c_M12,
     c_ST34, c_ST35};
 
-constexpr std::array<std::array<char, 3>, 162> s_deldood = {
+static constexpr std::array<std::array<char, 3>, 162> s_deldood = {
     {{-1, 0, 0},  {0, -1, 0},  {-2, -2, 0}, {-1, -1, 0}, {-1, 0, 0},
      {0, -2, 0},  {0, -1, 0},  {-1, 0, 0},  {0, -2, 0},  {0, -1, 0},
      {2, 0, 0},   {-2, -3, 0}, {-2, -2, 0}, {-1, -2, 0}, {-1, -1, 0},
@@ -1828,7 +1843,7 @@ constexpr std::array<std::array<char, 3>, 162> s_deldood = {
      {0, 1, 0},   {0, 2, 0},   {1, 0, 0},   {1, 1, 0},   {1, 2, 0},
      {2, 0, 0},   {0, -1, 0}}};
 
-constexpr std::array<double, 162> s_phcorr = {
+static constexpr std::array<double, 162> s_phcorr = {
     0.75, 0,    0.5,  0.75, 0.75, 0.5,  0,    0.75, 0.5,  0,    0.5,  0.5,
     0.5,  0.75, 0.75, 0.75, 0.5,  0,    0,    0.75, 0.5,  0.5,  0,    0.75,
     0.5,  0,    0.25, 0.5,  0,    0.25, 0.75, 0.25, 0.5,  0.5,  0,    0.25,
@@ -1844,7 +1859,7 @@ constexpr std::array<double, 162> s_phcorr = {
     0,    0.75, 0,    0.5,  0,    0.75, 0.75, 0.5,  0,    0,    0.5,  0,
     0,    0.75, 0.75, 0.75, 0.5,  0.5};
 
-constexpr std::array<double, 162> s_amprat = {
+static constexpr std::array<double, 162> s_amprat = {
     0.036,  0.1906, 0.0063, 0.0241, 0.0607, 0.0063, 0.1885, 0.0095, 0.0061,
     0.1884, 0.0087, 0.0007, 0.0039, 0.001,  0.0115, 0.0292, 0.0057, 0.0008,
     0.1884, 0.0018, 0.0028, 0.0058, 0.1882, 0.0131, 0.0576, 0.0175, 0.0003,
@@ -1864,7 +1879,7 @@ constexpr std::array<double, 162> s_amprat = {
     0.0022, 0.0001, 0.0001, 0.2535, 0.0141, 0.0024, 0.0004, 0.0128, 0.298,
     0.0324, 0.0187, 0.4355, 0.0467, 0.0747, 0.0482, 0.0093, 0.0078, 0.0564};
 
-constexpr std::array<unsigned char, 162> s_ilatfac = {
+static constexpr std::array<unsigned char, 162> s_ilatfac = {
     1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1,
     0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0,
@@ -1873,7 +1888,7 @@ constexpr std::array<unsigned char, 162> s_ilatfac = {
     2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 2, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0};
 
-constexpr std::array<unsigned char, 162> s_iconst = {
+static constexpr std::array<unsigned char, 162> s_iconst = {
     8,  8,  9,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11,
     11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14,
     14, 14, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 18, 19, 19,
@@ -1884,7 +1899,7 @@ constexpr std::array<unsigned char, 162> s_iconst = {
     47, 47, 48, 48, 48, 48, 48, 48, 48, 48, 48, 49, 53, 54, 54, 54, 54, 54,
     57, 57, 57, 58, 58, 59, 59, 59, 59, 59, 61, 61, 61, 61, 61, 61, 61, 69};
 
-constexpr std::array<unsigned char, 251> s_shallow_iconst = {
+static constexpr std::array<unsigned char, 251> s_shallow_iconst = {
     26,  26,  27,  27,  30,  30,  30,  31,  31,  32,  32,  33,  33,  33,  36,
     36,  36,  36,  37,  37,  37,  38,  44,  44,  44,  41,  41,  41,  45,  45,
     50,  50,  50,  51,  51,  51,  52,  52,  52,  52,  55,  55,  60,  60,  60,
@@ -1903,7 +1918,7 @@ constexpr std::array<unsigned char, 251> s_shallow_iconst = {
     136, 136, 137, 137, 138, 139, 139, 139, 140, 140, 141, 141, 141, 141, 142,
     142, 143, 143, 143, 144, 145, 145, 146, 146, 146, 146};
 
-constexpr std::array<double, 251> s_shallow_coef = {
+static constexpr std::array<double, 251> s_shallow_coef = {
     2.0,  -1.0, 1.0,  -1.0, 2.0,  1.0,  -2.0, 2.0,  -1.0, 3.0, -2.0, 2.0,
     1.0,  -2.0, 1.0,  1.0,  1.0,  -2.0, 2.0,  1.0,  -2.0, 2.0, 2.0,  1.0,
     -2.0, 1.0,  1.0,  -1.0, 1.0,  1.0,  1.0,  1.0,  -1.0, 1.0, 2.0,  -2.0,
@@ -1926,7 +1941,7 @@ constexpr std::array<double, 251> s_shallow_coef = {
     1.0,  5,    3.0,  1.0,  1.0,  4,    1.0,  2.0,  1.0,  1.0, 1.0,  3.0,
     2.0,  4,    1.0,  1.0,  6,    5,    1.0,  3.0,  1.0,  1.0, 1.0};
 
-constexpr std::array<unsigned char, 251> s_shallow_iname = {
+static constexpr std::array<unsigned char, 251> s_shallow_iname = {
     19, 13, 57, 13, 48, 42, 57, 42, 57, 48, 57, 42, 59, 57, 48, 42, 59, 57,
     48, 57, 59, 13, 59, 42, 57, 57, 42, 59, 13, 19, 48, 59, 57, 48, 59, 57,
     57, 42, 48, 59, 57, 59, 48, 57, 42, 59, 48, 57, 42, 57, 48, 48, 57, 42,
@@ -1942,7 +1957,7 @@ constexpr std::array<unsigned char, 251> s_shallow_iname = {
     48, 42, 21, 48, 42, 21, 48, 21, 48, 57, 21, 48, 42, 48, 48, 42, 57, 48,
     57, 48, 42, 57, 59, 48, 57, 48, 57, 21, 48, 48, 57, 48, 42, 59, 57};
 
-constexpr std::array<const char *, 146> s_names = {
+static constexpr std::array<std::string_view, 146> s_names = {
     "Z0",   "SA",   "SSA",  "MSM",  "MM",   "MSF",  "MF",   "ALP1", "2Q1",
     "SIG1", "Q1",   "RHO1", "O1",   "TAU1", "BET1", "NO1",  "CHI1", "PI1",
     "P1",   "S1",   "K1",   "PSI1", "PHI1", "THE1", "J1",   "2PO1", "SO1",
@@ -1961,7 +1976,7 @@ constexpr std::array<const char *, 146> s_names = {
     "ST27", "ST28", "M10",  "ST29", "ST30", "ST31", "ST32", "ST33", "M12",
     "ST34", "ST35"};
 
-constexpr std::array<short, 37> s_iconst_unique = {
+static constexpr std::array<short, 37> s_iconst_unique = {
     8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28,
     29, 34, 35, 39, 40, 42, 43, 46, 47, 48, 49, 53, 54, 57, 58, 59, 61, 69};
 

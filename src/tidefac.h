@@ -107,6 +107,15 @@ class TideFac {
     double astroarg;
   };
 
+  struct OrbitalDateData {
+    long seconds;
+    Date julian_date;
+    double days;
+    double dd;
+    double nd;
+    std::array<double, 4> args;
+  };
+
   static void toUpper(std::string &s);
 
   static constexpr double pi() { return M_PI; }
@@ -119,11 +128,10 @@ class TideFac {
     return static_cast<T>(1000.0);
   }
 
-  static void computeAstronomicalArguments(const std::array<double, 6> &astro,
-                                           double latitude,
-                                           std::vector<double> &F,
-                                           std::vector<double> &U,
-                                           std::vector<double> &V);
+  static std::tuple<std::vector<double>, std::vector<double>,
+                    std::vector<double>>
+  computeAstronomicalArguments(const std::array<double, 6> &astro,
+                               double latitude);
 
   static std::array<double, 162> computeUU(const std::array<double, 6> &astro);
 
@@ -132,9 +140,13 @@ class TideFac {
 
   static std::array<double, 162> computeRR(double latitude);
 
-  static void computeOrbitalParameters(const Date &d,
-                                       std::array<double, 6> *astro,
-                                       std::array<double, 6> *ader = nullptr);
+  OrbitalDateData computeOrbitalDates(const Date &d);
+
+  std::array<double, 6> computeSomeOrbitalParameters(const Date &d);
+  static std::array<double, 6> computeSomeOrbitalParameters(const OrbitalDateData &d);
+
+  std::tuple<std::array<double, 6>, std::array<double, 6>>
+  computeAllOrbitalParameters(const Date &d);
 
   static void computePrimaryFactors(
       std::vector<std::complex<double>> &F, std::vector<double> &U,
@@ -156,6 +168,7 @@ class TideFac {
                              const std::vector<double> &U,
                              const std::vector<double> &V);
 
+  const Date m_epoch;
   Date m_refTime;
   Date m_curTime;
   double m_resolution;
@@ -164,6 +177,17 @@ class TideFac {
   std::vector<double> m_latgrid;
   std::vector<std::vector<Tide>> m_tides;
   std::tuple<double, double, double> getStaticParameters(size_t index);
+
+  static constexpr std::array<double, 4> sc{270.434164, 13.1763965268,
+                                            -0.0000850, 0.000000039};
+  static constexpr std::array<double, 4> hc{279.696678, 0.9856473354,
+                                            0.00002267, 0.000000000};
+  static constexpr std::array<double, 4> pc{334.329556, 0.1114040803,
+                                            -0.0007739, -0.00000026};
+  static constexpr std::array<double, 4> npc{-259.183275, 0.0529539222,
+                                             -0.0001557, -0.000000050};
+  static constexpr std::array<double, 4> ppc{281.220844, 0.0000470684,
+                                             0.0000339, 0.000000070};
 };
 
 #endif  // TIDEFAC_H
