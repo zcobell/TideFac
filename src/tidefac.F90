@@ -418,6 +418,7 @@
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     REAL(8),INTENT(IN) :: dt
                     REAL(8),INTENT(IN) :: latitude
+                    ierr = 0
                     CALL c_calculateWithDt(this%ptr,dt,latitude)
                 END FUNCTION calculateWithDt
                 
@@ -426,6 +427,7 @@
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     INTEGER,INTENT(IN) :: year,month,day,hour,minute,second
                     REAL(8),INTENT(IN) :: latitude
+                    ierr = 0
                     CALL c_calculateWithDate(this%ptr,year,month,day,hour,minute,second,latitude)
                 END FUNCTION calculateWithDate
                 
@@ -437,6 +439,7 @@
                     INTEGER,INTENT(IN) :: year1,month1,day1,hour1,minute1,second1
                     INTEGER,INTENT(IN) :: year2,month2,day2,hour2,minute2,second2
                     REAL(8),INTENT(IN) :: latitude
+                    ierr = 0
                     CALL c_calculateWithTwoDates(this%ptr,year1,month1,day1,hour1,minute1,second1,&
                                                           year2,month2,day2,hour2,minute2,second2,latitude)
                 END FUNCTION calculateWithTwoDates
@@ -445,6 +448,7 @@
                     IMPLICIT NONE
                     CLASS(TIDEFAC),INTENT(INOUT) :: this
                     REAL(8),INTENT(IN)           :: dt
+                    ierr = 0
                     CALL c_calculateGrid(this%ptr,dt)
                 END FUNCTION calculateGrid
 
